@@ -1,4 +1,40 @@
+globals[
+  q
+]
 
+patches-own [
+
+]
+
+turtles-own [ ;turtles are agents in nlogo
+
+]
+
+to setup
+  ca ; clear all
+  ask patches [ ;tell patches what to do
+
+  ]
+  crt 10 [ ; create 10 turtles
+    set size 2
+    setxy random-pxcor random-pycor ;random x and y coordinates
+    ; pendown ;see how turtles move
+  ]
+  set q 0.4 ;Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
+  reset-ticks
+end
+
+to go
+  ask turtles [move]
+  tick
+  if ticks >= 1000 [stop]
+end
+
+to move ; a turtle procedure
+    ifelse random-float 1.0 < q  ; note: random-float 1.0 chooses a float between 0 and 1.0 THEN ifelse sees if this float is less than q.
+  [ fd 1  ] ; this will be TO a direction. In this case, forward 1
+  [ move-to one-of neighbors ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -26,6 +62,40 @@ GRAPHICS-WINDOW
 1
 ticks
 30.0
+
+BUTTON
+25
+78
+88
+111
+NIL
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+120
+80
+183
+113
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
