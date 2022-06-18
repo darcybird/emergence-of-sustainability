@@ -29,41 +29,44 @@ end
 
 to go
   tick
-  if random-float 1 < shock-prob [
-    ask patches [
-      shock ; shock occurs first
-    ]
-  ]
-  ask turtles [
-    respond ; turtles respond to shock
-  ]
+  shock ; shock occurs first
+  respond ; turtles respond to shock
   year-end
   if ticks >= 1000 [stop]
 end
 
 to shock  ;have patches change color to make the shock CLEAR
-  set pcolor white
-  set num-shocks num-shocks + 1
-  set shock-event random-poisson 1
-  set pcolor black
+  if random-float 1 < shock-prob [
+    ask patches [
+      set pcolor white
+      set num-shocks num-shocks + 1
+      set shock-event random-poisson 1
+    ]
+  ]
 end
 
 to respond ; a turtle procedure
+  ask turtles [
     if resilience < shock-event
-  [
-    die
-    show "I died due to the shock!"
-  ]
+    [
+      die
+      show "I died due to the shock!"
+    ]
   ifelse random-float 1.0 < q  ; note: random-float 1.0 chooses a float between 0 and 1.0 THEN ifelse sees if this float is less than q. This will change to moving towards nearest turtle with higher resilience
     [ fd 1  ] ; this will be TO a direction. In this case, forward 1
     [
       face one-of neighbors
       fd 1
     ]
+  ]
+
 end
 
 to year-end
-  ask patches [set shock-event 0]
+  ask patches [
+    set shock-event 0
+    set pcolor black
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
