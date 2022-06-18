@@ -1,39 +1,69 @@
 globals[
   q
+  shock-prob
+  num-shocks
 ]
 
 patches-own [
-
+  shock-event
 ]
 
 turtles-own [ ;turtles are agents in nlogo
-
+  resilience
 ]
 
 to setup
   ca ; clear all
   ask patches [ ;tell patches what to do
-
   ]
-  crt 10 [ ; create 10 turtles
+  crt num-turtles [ ; create 10 turtles
     set size 2
     setxy random-pxcor random-pycor ;random x and y coordinates
+    set resilience random-poisson 1
     ; pendown ;see how turtles move
   ]
-  set q 0.4 ;Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
+  set q 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
+  set shock-prob 0.1
   reset-ticks
 end
 
 to go
-  ask turtles [move]
   tick
+  if random-float 1 < shock-prob [
+    ask patches [
+      shock ; shock occurs first
+    ]
+  ]
+  ask turtles [
+    respond ; turtles respond to shock
+  ]
+  year-end
   if ticks >= 1000 [stop]
 end
 
-to move ; a turtle procedure
-    ifelse random-float 1.0 < q  ; note: random-float 1.0 chooses a float between 0 and 1.0 THEN ifelse sees if this float is less than q.
-  [ fd 1  ] ; this will be TO a direction. In this case, forward 1
-  [ move-to one-of neighbors ]
+to shock  ;have patches change color to make the shock CLEAR
+  set pcolor white
+  set num-shocks num-shocks + 1
+  set shock-event random-poisson 1
+  set pcolor black
+end
+
+to respond ; a turtle procedure
+    if resilience < shock-event
+  [
+    die
+    show "I died due to the shock!"
+  ]
+  ifelse random-float 1.0 < q  ; note: random-float 1.0 chooses a float between 0 and 1.0 THEN ifelse sees if this float is less than q. This will change to moving towards nearest turtle with higher resilience
+    [ fd 1  ] ; this will be TO a direction. In this case, forward 1
+    [
+      face one-of neighbors
+      fd 1
+    ]
+end
+
+to year-end
+  ask patches [set shock-event 0]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -63,11 +93,26 @@ GRAPHICS-WINDOW
 ticks
 30.0
 
+SLIDER
+21
+131
+193
+164
+num-turtles
+num-turtles
+0
+50
+22.0
+1
+1
+NIL
+HORIZONTAL
+
 BUTTON
-25
-78
-88
-111
+7
+77
+70
+110
 NIL
 setup
 NIL
@@ -81,13 +126,30 @@ NIL
 1
 
 BUTTON
-120
-80
-183
-113
+73
+77
+136
+110
 NIL
 go
 T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+139
+77
+202
+110
+step
+go
+NIL
 1
 T
 OBSERVER
