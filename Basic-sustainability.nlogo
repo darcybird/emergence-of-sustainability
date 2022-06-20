@@ -5,14 +5,15 @@ globals[
   nTurtles
   stopNext
   shock-power-dist
+  shock-power
 ]
 
 patches-own [
   shock-event
-  shock-power
 ]
 
 turtles-own [ ;turtles are agents in nlogo
+  group
   resilience
 ]
 
@@ -22,34 +23,42 @@ to setup
   ]
   crt num-turtles [ ; create 10 turtles
     set size 2
+    set group who
+    set color group
+    set label group
     setxy random-pxcor random-pycor ;random x and y coordinates
     set resilience random-poisson 1
     ; pendown ;see how turtles move
   ]
   set q 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
   set shock-prob 0.1
-  set shock-power-dist []
+  set shock-power-dist (list)
   set nTurtles count turtles
   reset-ticks
 end
 
 to go
   tick
+  ask patches [
+      set pcolor black
+    ]
   shock ; shock occurs first
-;  set shock-power-dist lput shock-power shock-power-dist
-;  show shock-power-dist
+  show shock-power
+  show shock-power-dist
   respond ; turtles respond to shock
   year-end
+  plot-data
   if stopNext = TRUE [stop]
   if ticks >= 1000 [stop]
 end
 
 to shock  ;have patches change color to make the shock CLEAR
   if random-float 1 < shock-prob [
+    set num-shocks num-shocks + 1
+    set shock-power random-poisson 1
+    set shock-power-dist lput shock-power shock-power-dist
     ask patches [
       set pcolor white
-      set num-shocks num-shocks + 1
-      set shock-power random-poisson 1
     ]
   ]
 end
@@ -58,8 +67,8 @@ to respond ; a turtle procedure
   ask turtles [
     if resilience < shock-power
     [
-      die
       show "I died due to the shock!"
+      die
     ]
   ifelse random-float 1.0 < q  ; note: random-float 1.0 chooses a float between 0 and 1.0 THEN ifelse sees if this float is less than q. This will change to moving towards nearest turtle with higher resilience
     [ fd 1  ] ; this will be TO a direction. In this case, forward 1
@@ -85,6 +94,15 @@ to-report meanResilience
   ifelse any? turtles
   [report mean [resilience] of turtles]
   [report 0]
+end
+
+to plot-data
+  set-current-plot "Shocks"
+ ; plot length(shock-power-dist)           ;;This plots richness to the interface.  Mostly cosmetic, but could be useful for debugging.
+  set-plot-pen-mode 1                   ;;"bar" pen-mode
+  set-plot-pen-interval 1
+  set-plot-x-range 0 5
+  histogram shock-power-dist          ;;This plots a histogram of all past shocks to front
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -215,6 +233,24 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot meanResilience"
+
+PLOT
+663
+164
+863
+314
+Shocks
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"pen-0" 1.0 0 -7500403 true "" ""
 
 @#$#@#$#@
 ## WHAT IS IT?
