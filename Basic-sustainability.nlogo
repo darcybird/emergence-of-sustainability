@@ -2,10 +2,14 @@ globals[
   q
   shock-prob
   num-shocks
+  nTurtles
+  stopNext
+  shock-power-dist
 ]
 
 patches-own [
   shock-event
+  shock-power
 ]
 
 turtles-own [ ;turtles are agents in nlogo
@@ -24,14 +28,19 @@ to setup
   ]
   set q 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
   set shock-prob 0.1
+  set shock-power-dist []
+  set nTurtles count turtles
   reset-ticks
 end
 
 to go
   tick
   shock ; shock occurs first
+;  set shock-power-dist lput shock-power shock-power-dist
+;  show shock-power-dist
   respond ; turtles respond to shock
   year-end
+  if stopNext = TRUE [stop]
   if ticks >= 1000 [stop]
 end
 
@@ -40,14 +49,14 @@ to shock  ;have patches change color to make the shock CLEAR
     ask patches [
       set pcolor white
       set num-shocks num-shocks + 1
-      set shock-event random-poisson 1
+      set shock-power random-poisson 1
     ]
   ]
 end
 
 to respond ; a turtle procedure
   ask turtles [
-    if resilience < shock-event
+    if resilience < shock-power
     [
       die
       show "I died due to the shock!"
@@ -66,7 +75,16 @@ to year-end
   ask patches [
     set shock-event 0
     set pcolor black
+    set nTurtles count turtles
+    if nTurtles = 0
+    [set stopNext TRUE]
   ]
+end
+
+to-report meanResilience
+  ifelse any? turtles
+  [report mean [resilience] of turtles]
+  [report 0]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -161,6 +179,42 @@ NIL
 NIL
 NIL
 1
+
+PLOT
+662
+10
+862
+160
+nTurtles over Time
+ticks
+nTurtles
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot count turtles"
+
+PLOT
+865
+10
+1065
+160
+Mean resilience
+ticks
+Resilience
+0.0
+10.0
+0.0
+5.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot meanResilience"
 
 @#$#@#$#@
 ## WHAT IS IT?
