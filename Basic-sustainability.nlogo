@@ -19,15 +19,16 @@ turtles-own [ ;turtles are agents in nlogo
 
 to setup
   ca ; clear all
-  ask patches [ ;tell patches what to do
-  ]
+  ask patches [
+      set pcolor green
+    ]
   crt num-turtles [ ; create 10 turtles
     set size 2
     set group who
-    set color group
     set label group
     setxy random-pxcor random-pycor ;random x and y coordinates
     set resilience random-poisson 1
+    set color resilience
     ; pendown ;see how turtles move
   ]
   set q 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
@@ -40,7 +41,7 @@ end
 to go
   tick
   ask patches [
-      set pcolor black
+      set pcolor green
     ]
   shock ; shock occurs first
   show shock-power
@@ -83,7 +84,7 @@ end
 to year-end
   ask patches [
     set shock-event 0
-    set pcolor black
+    set pcolor green
     set nTurtles count turtles
     if nTurtles = 0
     [set stopNext TRUE]
