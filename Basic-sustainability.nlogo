@@ -1,11 +1,12 @@
 globals[
-  q
+  cooperation-prob
   shock-prob
   num-shocks
   nTurtles
   stopNext
   shock-power-dist
   shock-power
+  search-radius
 ]
 
 patches-own [
@@ -37,7 +38,8 @@ to setup
    ; set color resilience
     ; pendown ;see how turtles move
   ]
-  set q 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
+  set search-radius 1
+  set cooperation-prob 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
   set shock-prob 0.1
   set shock-power-dist (list)
   set nTurtles count turtles
@@ -53,6 +55,9 @@ to go
   show shock-power
   show shock-power-dist
   respond ; turtles respond to shock
+  move
+  ; gather
+ ; cooperate
   year-end
   plot-data
   if stopNext = TRUE [stop]
@@ -84,14 +89,33 @@ to respond ; a turtle procedure
       set knowledge knowledge + 0.1 * shock-power
       set shocks-survived shocks-survived + 1
     ]
-  ifelse random-float 1.0 < q  ; note: random-float 1.0 chooses a float between 0 and 1.0 THEN ifelse sees if this float is less than q. This will change to moving towards nearest turtle with higher resilience
-    [ fd 1  ] ; this will be TO a direction. In this case, forward 1
+  ]
+end
+
+to move ; make more complex if they need resources or knowledge
+  ask turtles
+  [
+   face one-of neighbors
+   fd 1
+  ]
+end
+
+;to gather
+;
+;
+;end
+
+to cooperate
+  ask turtles
+  [
+    if any? other turtles in-radius search-radius
     [
-      face one-of neighbors
-      fd 1
+      if random-float 1.0 < cooperation-prob
+      [
+
+      ]
     ]
   ]
-
 end
 
 to year-end
@@ -136,6 +160,18 @@ to plot-data
   set-plot-pen-interval 1
   ;set-plot-x-range 0 5
   histogram [food] of turtles          ;;This plots a histogram of  food distribution
+
+  set-current-plot "Knowledge"
+  set-plot-pen-mode 1
+  set-plot-pen-interval 1
+  ;set-plot-x-range 0 5
+  histogram [knowledge] of turtles          ;;This plots a histogram of  food distribution
+
+ ; set-current-plot "Shocks Survived"
+ ; set-plot-pen-mode 1
+ ; set-plot-pen-interval 1
+ ; ;set-plot-x-range 0 5
+ ; histogram [shocks-survived] of turtles          ;;This plots a histogram of  food distribution
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -260,7 +296,7 @@ NIL
 0.0
 10.0
 0.0
-10.0
+5.0
 true
 false
 "" ""
@@ -273,6 +309,24 @@ PLOT
 1066
 315
 Ages
+age
+count
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"pen-0" 1.0 0 -7500403 true "" "plot count turtles"
+
+PLOT
+866
+10
+1066
+160
+Food
 NIL
 NIL
 0.0
@@ -283,14 +337,14 @@ true
 false
 "" ""
 PENS
-"pen-1" 1.0 0 -7500403 true "" "plot [count] of turtles"
+"default" 1.0 0 -16777216 true "" "plot count turtles"
 
 PLOT
-866
+1070
 10
-1066
+1270
 160
-Food
+Knowledge
 NIL
 NIL
 0.0
