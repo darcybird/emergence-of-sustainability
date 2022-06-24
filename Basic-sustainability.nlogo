@@ -10,6 +10,7 @@ globals[
 
 patches-own [
   shock-event
+  resource
 ]
 
 turtles-own [ ;turtles are agents in nlogo
