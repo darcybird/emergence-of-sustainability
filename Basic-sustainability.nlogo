@@ -1,26 +1,25 @@
 globals[
-  cooperation-prob
-  shock-prob
-  num-shocks
-  nTurtles
-  stopNext
-  shock-power-dist
-  shock-power
-  search-radius
+  stopNext ;basic. Assigned according to various conditions.
+  nTurtles ;basic
+  cooperation-prob ; for cooperate
+  shock-prob ; for shock
+  num-shocks ; keep track of # of shocks in the environemnt
+  shock-power ; for each shock (max 1 per tick)
+  shock-power-dist ; for the graph
+  search-radius ; for turtles to look for other turtles
 ]
 
 patches-own [
-  shock-event
-  resource
+  resource ; for the turtles to gather from for food
 ]
 
 turtles-own [ ;turtles are agents in nlogo
-  ego
-  age
-  food
-  knowledge
-  relative-shock-power
-  shocks-survived
+  ego ; self-identification. might not be necessary
+  age ; + 1 per tick
+  food ; temporary resources used to survive shocks
+  knowledge ; slowly gained based on shocks experienced + via cooperation
+  relative-shock-power ; shock-power adjusted by experience
+  shocks-survived ; to track each individual's past traumas
 ]
 
 to setup
@@ -117,7 +116,6 @@ end
 
 to year-end
   ask patches [
-    set shock-event 0
     set pcolor green
   ]
   ask turtles
