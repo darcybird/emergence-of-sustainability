@@ -15,6 +15,7 @@ patches-own [
 ]
 
 turtles-own [ ;turtles are agents in nlogo
+  ego
   age
   food
   knowledge
@@ -31,7 +32,7 @@ to setup
     set size 2
     set age 0
     set knowledge 0
-   ; set group who
+    set ego who
    ; set label group
     setxy random-pxcor random-pycor ;random x and y coordinates
     set food random-poisson 1
@@ -51,10 +52,9 @@ to go
   ask patches [
       set pcolor green
     ]
-  shock ; shock occurs first
-  show shock-power
-  show shock-power-dist
-  respond ; turtles respond to shock
+  shock ; shock occurs first, then turtles respond.
+ ; show shock-power
+ ; show shock-power-dist
   move
   ; gather
  ; cooperate
@@ -72,11 +72,7 @@ to shock  ;have patches change color to make the shock CLEAR
     ask patches [
       set pcolor white
     ]
-  ]
-end
-
-to respond ; a turtle procedure
-  ask turtles [
+    ask turtles [
     ifelse knowledge + food < shock-power
     [
       show "I died due to the shock!"
@@ -89,6 +85,7 @@ to respond ; a turtle procedure
       set knowledge knowledge + 0.1 * shock-power
       set shocks-survived shocks-survived + 1
     ]
+  ]
   ]
 end
 
@@ -108,13 +105,13 @@ end
 to cooperate
   ask turtles
   [
-    if any? other turtles in-radius search-radius
-    [
-      if random-float 1.0 < cooperation-prob
-      [
-
-      ]
-    ]
+;    if any? other turtles in-radius search-radius with knowledge > knowledge of ego
+ ;   [
+  ;    if random-float 1.0 < cooperation-prob
+    ;  [
+   ;
+     ; ]
+   ; ]
   ]
 end
 
