@@ -14,8 +14,11 @@ patches-own [
 ]
 
 turtles-own [ ;turtles are agents in nlogo
-  group
-  resilience
+  age
+  food
+  knowledge
+  relative-shock-power
+  shocks-survived
 ]
 
 to setup
@@ -25,11 +28,13 @@ to setup
     ]
   crt num-turtles [ ; create 10 turtles
     set size 2
-    set group who
-    set label group
+    set age 0
+    set knowledge 0
+   ; set group who
+   ; set label group
     setxy random-pxcor random-pycor ;random x and y coordinates
-    set resilience random-poisson 1
-    set color resilience
+    set food random-poisson 1
+   ; set color resilience
     ; pendown ;see how turtles move
   ]
   set q 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
@@ -67,10 +72,17 @@ end
 
 to respond ; a turtle procedure
   ask turtles [
-    if resilience < shock-power
+    ifelse knowledge + food < shock-power
     [
       show "I died due to the shock!"
       die
+    ]
+    [
+      set relative-shock-power shock-power - knowledge
+      set food food - relative-shock-power
+      set relative-shock-power 0
+      set knowledge knowledge + 0.1 * shock-power
+      set shocks-survived shocks-survived + 1
     ]
   ifelse random-float 1.0 < q  ; note: random-float 1.0 chooses a float between 0 and 1.0 THEN ifelse sees if this float is less than q. This will change to moving towards nearest turtle with higher resilience
     [ fd 1  ] ; this will be TO a direction. In this case, forward 1
@@ -86,25 +98,44 @@ to year-end
   ask patches [
     set shock-event 0
     set pcolor green
-    set nTurtles count turtles
-    if nTurtles = 0
-    [set stopNext TRUE]
   ]
+  ask turtles
+  [
+    set age age + 1
+  ]
+  set nTurtles count turtles
+  if nTurtles = 0
+  [
+      set stopNext TRUE
+  ]
+
 end
 
-to-report meanResilience
+to-report meanFood
   ifelse any? turtles
-  [report mean [resilience] of turtles]
+  [report mean [food] of turtles]
   [report 0]
 end
 
 to plot-data
   set-current-plot "Shocks"
  ; plot length(shock-power-dist)           ;;This plots richness to the interface.  Mostly cosmetic, but could be useful for debugging.
-  set-plot-pen-mode 1                   ;;"bar" pen-mode
+  set-plot-pen-mode 1
   set-plot-pen-interval 1
   set-plot-x-range 0 5
   histogram shock-power-dist          ;;This plots a histogram of all past shocks to front
+
+  set-current-plot "Ages"
+  set-plot-pen-mode 1
+  set-plot-pen-interval 1
+  ;set-plot-x-range 0 5
+  histogram [age] of turtles          ;;This plots a histogram of all current turtle ages
+
+  set-current-plot "Food"
+  set-plot-pen-mode 1
+  set-plot-pen-interval 1
+  ;set-plot-x-range 0 5
+  histogram [food] of turtles          ;;This plots a histogram of  food distribution
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -219,24 +250,6 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles"
 
 PLOT
-865
-10
-1065
-160
-Mean resilience
-ticks
-Resilience
-0.0
-10.0
-0.0
-5.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot meanResilience"
-
-PLOT
 663
 164
 863
@@ -253,6 +266,42 @@ false
 "" ""
 PENS
 "pen-0" 1.0 0 -7500403 true "" ""
+
+PLOT
+866
+165
+1066
+315
+Ages
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"pen-1" 1.0 0 -7500403 true "" "plot [count] of turtles"
+
+PLOT
+866
+10
+1066
+160
+Food
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot count turtles"
 
 @#$#@#$#@
 ## WHAT IS IT?
