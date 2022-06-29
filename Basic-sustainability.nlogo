@@ -111,41 +111,44 @@ end
 to cooperate
   ask turtles
   [
-    if coop-this-tick = FALSE [
-  if any? other turtles in-radius search-radius [
-    set cooperate-count cooperate-count + 1
-    set coop-this-tick TRUE
-            show "I'm beginning this trade"
-    show knowledge
-
-    ask one-of other turtles in-radius search-radius
+    if coop-this-tick = FALSE  ; turtles can only cooperate once per turn
     [
-      set cooperate-count cooperate-count + 1
-      set coop-this-tick TRUE
-          show "I am the recipient of this trade"
-          show knowledge
-
-          ;; self vs myself needs some help
-
-
-      ifelse knowledge > [knowledge] of myself [
-        ask myself [ set knowledge  knowledge + (knowledge * k-trade)]
-        set knowledge knowledge + (knowledge * k-trade)
-                      show "Trade Sanity Check"
-          show knowledge
-
-      ]
-      [
-        ask myself [ set knowledge  knowledge - (knowledge * k-trade)]
-        set knowledge knowledge + (knowledge * k-trade)
-                    show "Trade Sanity Check"
-        show knowledge
-
+  if any? other turtles in-radius search-radius [ ; one turtle looks around
+        set cooperate-count cooperate-count + 1
+        set coop-this-tick TRUE
+       ; show "I'm beginning this trade"
+        ;show knowledge
+        ask one-of other turtles in-radius search-radius ; asks a nearby turtle "what's up"
+        [
+          set cooperate-count cooperate-count + 1
+          set coop-this-tick TRUE
+       ;   show "I am the recipient of this trade"
+       ;   show knowledge
+          ifelse [knowledge] of self > [knowledge] of myself  ; asked turtle asks back "do you know more than me?"
+          [
+            ask myself ; you DO know more than me
+            [
+              set knowledge knowledge + ([knowledge] of myself * k-trade) ;give me your knowledge plz
+             ; show "Trade Sanity Check"
+             ; show knowledge
+              ]
+            ;  set knowledge knowledge - ([knowledge] of self * k-trade )     ; that turtle loses knowledge  (save code for resources)
+             ; show knowledge
+          ]
+          [
+           ; ask myself
+           ; [
+           ;   set knowledge knowledge - ([knowledge] of myself * k-trade)
+            ;  show "Trade Sanity Check"
+            ;    show knowledge
+            ;  ]
+            set knowledge knowledge + ([knowledge] of self * k-trade )
+           ;     show knowledge
+          ]
+        ]
       ]
     ]
   ]
-
-  ]]
 end
 
 to year-end
