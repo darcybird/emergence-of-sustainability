@@ -11,11 +11,15 @@ globals[
   k-trade ; knowledge degradation via trade
 ]
 
+
+
 patches-own [
-  resource ; for the turtles to gather from for food
+  resource
+ food-source-number
 ]
 
-turtles-own [ ;turtles are agents in nlogo
+turtles-own [
+;turtles are agents in nlogo
   age ; + 1 per tick
   food ; temporary resources used to survive shocks
   knowledge ; slowly gained based on shocks experienced + via cooperation
@@ -27,12 +31,17 @@ turtles-own [ ;turtles are agents in nlogo
 
 to setup
   ca ; clear all
+
+  setup-resources
   ask patches [
       set pcolor green
     ]
   set resource-patches patches with [pxcor > 0 and pycor > 0]
   ask resource-patches [ set pcolor blue ]
 
+
+
+   ;setup-food
   crt num-turtles [ ; create 10 turtles
     set size 2
     set age 0
@@ -51,6 +60,23 @@ to setup
   set shock-power-dist (list)
   set nTurtles count turtles
   reset-ticks
+end
+
+to setup-resources
+  ask patches [
+    set pcolor blue
+  if (distancexy (0.6 * max-pxcor) 0) < 5
+  [ set food-source-number 1 ]
+  ;; setup food source two on the lower-left
+  if (distancexy (-0.6 * max-pxcor) (-0.6 * max-pycor)) < 5
+  [ set food-source-number 2 ]
+  ;; setup food source three on the upper-left
+  if (distancexy (-0.8 * max-pxcor) (0.8 * max-pycor)) < 5
+  [ set food-source-number 3 ]
+  ;; set "food" at sources to either 1 or 2, randomly
+  if food-source-number > 0
+  [ set resource one-of [1 2] ]
+  ]
 end
 
 to go
@@ -130,7 +156,7 @@ to cooperate
 
       ifelse knowledge > [knowledge] of myself [
         ask myself [ set knowledge  knowledge + (knowledge * k-trade)]
-        set knowledge knowledge + (knowledge * k-trade)
+        set knowledge knowledge - (knowledge * k-trade)
                       show "Trade Sanity Check"
           show knowledge
 
@@ -729,7 +755,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.2
+NetLogo 6.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
