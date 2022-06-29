@@ -7,6 +7,7 @@ globals[
   shock-power ; for each shock (max 1 per tick)
   shock-power-dist ; for the graph
   search-radius ; for turtles to look for other turtles
+  resource-patches
 ]
 
 patches-own [
@@ -14,12 +15,12 @@ patches-own [
 ]
 
 turtles-own [ ;turtles are agents in nlogo
-  ego ; self-identification. might not be necessary
   age ; + 1 per tick
   food ; temporary resources used to survive shocks
   knowledge ; slowly gained based on shocks experienced + via cooperation
   relative-shock-power ; shock-power adjusted by experience
   shocks-survived ; to track each individual's past traumas
+  partner
 ]
 
 to setup
@@ -27,11 +28,13 @@ to setup
   ask patches [
       set pcolor green
     ]
+   set resource-patches patches with [pxcor > 0 and pycor > 0]
+  ask resource-patches [ set pcolor blue ]
+
   crt num-turtles [ ; create 10 turtles
     set size 2
     set age 0
     set knowledge 0
-    set ego who
    ; set label group
     setxy random-pxcor random-pycor ;random x and y coordinates
     set food random-poisson 1
@@ -56,7 +59,7 @@ to go
  ; show shock-power-dist
   move
   ; gather
- ; cooperate
+  cooperate
   year-end
   plot-data
   if stopNext = TRUE [stop]
@@ -96,7 +99,7 @@ to move ; make more complex if they need resources or knowledge
   ]
 end
 
-;to gather
+;to gather ; need resources to code
 ;
 ;
 ;end
@@ -104,13 +107,18 @@ end
 to cooperate
   ask turtles
   [
-;    if any? other turtles in-radius search-radius with knowledge > knowledge of ego
- ;   [
-  ;    if random-float 1.0 < cooperation-prob
-    ;  [
-   ;
-     ; ]
-   ; ]
+    if any? other turtles in-radius search-radius
+    [
+      ask one-of turtles in-radius search-radius
+      [
+        set partner myself ; this won't work
+      ]
+      set color black
+      ;if random-float 1.0 < cooperation-prob
+      ;[
+
+      ;]
+    ]
   ]
 end
 
