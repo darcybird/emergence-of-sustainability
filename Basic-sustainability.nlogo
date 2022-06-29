@@ -1,14 +1,14 @@
 globals[
   stopNext ;basic. Assigned according to various conditions.
   nTurtles ;basic
-  cooperation-prob ; for cooperate
-  shock-prob ; for shock
+  ;cooperation-prob ; for cooperate
+  ; shock-prob ; for shock
   num-shocks ; keep track of # of shocks in the environemnt
   shock-power ; for each shock (max 1 per tick)
   shock-power-dist ; for the graph
-  search-radius ; for turtles to look for other turtles
+  ;search-radius ; for turtles to look for other turtles
   resource-patches
-  k-trade ; knowledge degradation via trade
+ ; k-trade ; knowledge degradation via trade
 ]
 
 patches-own [
@@ -45,7 +45,8 @@ to setup
   set k-trade 0.1
   set search-radius 1
   set cooperation-prob 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
-  set shock-prob 0.1
+  ; set shock-prob 0.1
+  set regeneration-rate .1; modifies rate of resource regeneration
   set shock-power-dist (list)
   set nTurtles count turtles
   reset-ticks
@@ -362,6 +363,81 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles"
+
+SLIDER
+21
+167
+193
+200
+shock-prob
+shock-prob
+0
+1
+0.5
+.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+21
+204
+193
+237
+k-trade
+k-trade
+0
+1
+0.1
+.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+21
+241
+193
+274
+search-radius
+search-radius
+0
+1
+0.2
+.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+22
+276
+194
+309
+cooperation-prob
+cooperation-prob
+0
+1
+0.1
+.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+22
+312
+194
+345
+regeneration-rate
+regeneration-rate
+0
+1
+0.3
+.1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
