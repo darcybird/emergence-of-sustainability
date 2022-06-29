@@ -11,11 +11,15 @@ globals[
   k-trade ; knowledge degradation via trade
 ]
 
+
+
 patches-own [
-  resource ; for the turtles to gather from for food
+  resource
+ resource-source-number
 ]
 
-turtles-own [ ;turtles are agents in nlogo
+turtles-own [
+;turtles are agents in nlogo
   age ; + 1 per tick
   food ; temporary resources used to survive shocks
   knowledge ; slowly gained based on shocks experienced + via cooperation
@@ -27,12 +31,8 @@ turtles-own [ ;turtles are agents in nlogo
 
 to setup
   ca ; clear all
-  ask patches [
-      set pcolor green
-    ]
-  set resource-patches patches with [pxcor > 0 and pycor > 0]
-  ask resource-patches [ set pcolor blue ]
-
+  setup-patches
+   ;setup-food
   crt num-turtles [ ; create 10 turtles
     set size 2
     set age 0
@@ -53,11 +53,36 @@ to setup
   reset-ticks
 end
 
+to setup-patches
+  ask patches [
+    setup-resource
+    recolor-patch
+  ]
+end
+
+to setup-resource
+  if (distancexy (0.6 * max-pxcor) 0) < 5
+  [ set resource-source-number 1 ]
+  ;; setup food source two on the lower-left
+  if (distancexy (-0.6 * max-pxcor) (-0.6 * max-pycor)) < 5
+  [ set resource-source-number 2 ]
+  ;; setup food source three on the upper-left
+  if (distancexy (-0.8 * max-pxcor) (0.8 * max-pycor)) < 5
+  [ set resource-source-number 3 ]
+  ;; set "food" at sources to either 1 or 2, randomly
+  if resource-source-number > 0
+  [ set resource one-of [1 2] ]
+end
+
+to recolor-patch
+  if resource > 0
+  [ if resource-source-number = 1 [set pcolor cyan]
+  if resource-source-number = 2 [set pcolor sky]
+    if resource-source-number = 3 [set pcolor blue]]
+end
+
 to go
   tick
-  ask patches [
-      set pcolor green
-    ]
   shock ; shock occurs first, then turtles respond.
  ; show shock-power
  ; show shock-power-dist
@@ -152,9 +177,6 @@ to cooperate
 end
 
 to year-end
-  ask patches [
-    set pcolor green
-  ]
   ask turtles
   [
     set age age + 1
@@ -210,11 +232,11 @@ end
 GRAPHICS-WINDOW
 210
 10
-647
-448
+715
+516
 -1
 -1
-13.0
+7.0
 1
 10
 1
@@ -224,10 +246,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-35
+35
+-35
+35
 0
 0
 1
@@ -301,10 +323,10 @@ NIL
 1
 
 PLOT
-662
-10
-862
-160
+912
+318
+1112
+468
 nTurtles over Time
 ticks
 nTurtles
@@ -319,10 +341,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles"
 
 PLOT
-663
-164
-863
-314
+841
+167
+1041
+317
 Shocks
 NIL
 NIL
@@ -337,10 +359,10 @@ PENS
 "pen-0" 1.0 0 -7500403 true "" ""
 
 PLOT
-866
-165
-1066
-315
+981
+159
+1181
+309
 Ages
 age
 count
@@ -732,7 +754,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.2
+NetLogo 6.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
