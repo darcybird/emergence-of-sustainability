@@ -130,7 +130,7 @@ to cooperate
 
       ifelse knowledge > [knowledge] of myself [
         ask myself [ set knowledge  knowledge + (knowledge * k-trade)]
-        set knowledge knowledge - (knowledge * k-trade)
+        set knowledge knowledge + (knowledge * k-trade)
                       show "Trade Sanity Check"
           show knowledge
 
