@@ -22,6 +22,7 @@ turtles-own [ ;turtles are agents in nlogo
   relative-shock-power ; shock-power adjusted by experience
   shocks-survived ; to track each individual's past traumas
   cooperate-count
+  coop-this-tick ; each turtle can only cooperate once/turn
 ]
 
 to setup
@@ -35,7 +36,8 @@ to setup
   crt num-turtles [ ; create 10 turtles
     set size 2
     set age 0
-    set knowledge 0
+    ;set knowledge 0
+    set knowledge random-poisson 1
    ; set label group
     setxy random-pxcor random-pycor ;random x and y coordinates
     set food random-poisson 1
@@ -110,20 +112,41 @@ end
 to cooperate
   ask turtles
   [
+    if coop-this-tick = FALSE [
+  if any? other turtles in-radius search-radius [
     set cooperate-count cooperate-count + 1
+    set coop-this-tick TRUE
+            show "I'm beginning this trade"
+    show knowledge
+
     ask one-of other turtles in-radius search-radius
     [
       set cooperate-count cooperate-count + 1
+      set coop-this-tick TRUE
+          show "I am the recipient of this trade"
+          show knowledge
+
+          ;; self vs myself needs some help
+
+
       ifelse knowledge > [knowledge] of myself [
-        ask myself [ set knowledge  knowledge - (knowledge * k-trade)]
-        set knowledge knowledge + (knowledge * k-trade)
-      ]
-      [
         ask myself [ set knowledge  knowledge + (knowledge * k-trade)]
         set knowledge knowledge - (knowledge * k-trade)
+                      show "Trade Sanity Check"
+          show knowledge
+
+      ]
+      [
+        ask myself [ set knowledge  knowledge - (knowledge * k-trade)]
+        set knowledge knowledge + (knowledge * k-trade)
+                    show "Trade Sanity Check"
+        show knowledge
+
       ]
     ]
   ]
+
+  ]]
 end
 
 to year-end
@@ -133,6 +156,7 @@ to year-end
   ask turtles
   [
     set age age + 1
+    set coop-this-tick FALSE
   ]
   set nTurtles count turtles
   if nTurtles = 0
