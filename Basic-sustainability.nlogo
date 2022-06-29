@@ -8,6 +8,7 @@ globals[
   shock-power-dist ; for the graph
   search-radius ; for turtles to look for other turtles
   resource-patches
+  k-trade ; knowledge degradation via trade
 ]
 
 patches-own [
@@ -20,7 +21,7 @@ turtles-own [ ;turtles are agents in nlogo
   knowledge ; slowly gained based on shocks experienced + via cooperation
   relative-shock-power ; shock-power adjusted by experience
   shocks-survived ; to track each individual's past traumas
-  partner
+  cooperate-count
 ]
 
 to setup
@@ -28,7 +29,7 @@ to setup
   ask patches [
       set pcolor green
     ]
-   set resource-patches patches with [pxcor > 0 and pycor > 0]
+  set resource-patches patches with [pxcor > 0 and pycor > 0]
   ask resource-patches [ set pcolor blue ]
 
   crt num-turtles [ ; create 10 turtles
@@ -41,6 +42,7 @@ to setup
    ; set color resilience
     ; pendown ;see how turtles move
   ]
+  set k-trade 0.1
   set search-radius 1
   set cooperation-prob 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
   set shock-prob 0.1
@@ -107,17 +109,18 @@ end
 to cooperate
   ask turtles
   [
-    if any? other turtles in-radius search-radius
+    set cooperate-count cooperate-count + 1
+    ask one-of other turtles in-radius search-radius
     [
-      ask one-of turtles in-radius search-radius
-      [
-        set partner myself ; this won't work
+      set cooperate-count cooperate-count + 1
+      ifelse knowledge > [knowledge] of myself [
+        ask myself [ set knowledge  knowledge - (knowledge * k-trade)]
+        set knowledge knowledge + (knowledge * k-trade)
       ]
-      set color black
-      ;if random-float 1.0 < cooperation-prob
-      ;[
-
-      ;]
+      [
+        ask myself [ set knowledge  knowledge + (knowledge * k-trade)]
+        set knowledge knowledge - (knowledge * k-trade)
+      ]
     ]
   ]
 end
