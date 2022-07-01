@@ -194,7 +194,11 @@ to year-end
   [
     set age age + 1
     set coop-this-tick FALSE
-    if age > 75 [die]
+    if age > 75
+    [
+      show "I'm dying due to old age."
+      die
+    ]
   ]
   set nTurtles count turtles
   if nTurtles = 0
