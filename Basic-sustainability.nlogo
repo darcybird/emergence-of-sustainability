@@ -210,7 +210,12 @@ to year-end
       show "I'm dying due to old age."
       die
     ]
+   reproduce
   ]
+  ;ask patches
+  ;[
+   ;regenerate
+  ;]
   set nTurtles count turtles
   if nTurtles = 0
   [
@@ -219,6 +224,30 @@ to year-end
   recolor-patch
 end
 
+
+to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 in food
+  if age > 18 and food > 10
+  [
+    hatch 1
+    [
+      set age 0
+      set food random-poisson 1
+      set knowledge 0
+      set shocks-survived 0
+    ]
+    set food food - 10
+    show "I gave birth"
+  ]
+end
+
+;to regenerate; resources grow if depleted
+ ; ask patches
+  ;[
+   ; if resource < 2
+    ;[ set resource resource + .1
+    ;]
+  ;]
+;end
 
 to-report meanFood
   ifelse any? turtles
