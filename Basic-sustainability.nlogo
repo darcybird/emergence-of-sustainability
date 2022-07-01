@@ -31,7 +31,8 @@ turtles-own [
 
 to setup
   ca ; clear all
-  setup-patches
+  setup-resource
+  recolor-patch
   crt num-turtles [ ; create 10 turtles
     set size 2
     set age 0
@@ -53,15 +54,9 @@ to setup
   reset-ticks
 end
 
-to setup-patches
-    ask patches [
-    setup-resource
-    recolor-patch
-    ]
-  end
-
 to setup-resource
 ;; setup food source one on the right
+  ask patches [
   if (distancexy (0.6 * max-pxcor) 0) < 5
   [ set resource-source-number 1 ]
   ;; setup food source two on the lower-left
@@ -73,13 +68,19 @@ to setup-resource
   ;; set "food" at sources to either 1 or 2, randomly
   if resource-source-number > 0
   [ set resource one-of [1 2] ]
+  ]
 end
 
 to recolor-patch ; give color to resourced patches
-  if resource > 0
-     [ if resource-source-number = 1 [ set pcolor cyan ]
+  ask patches [
+  ifelse resource > 0
+    [
+      if resource-source-number = 1 [ set pcolor cyan ]
       if resource-source-number = 2 [ set pcolor sky  ]
-      if resource-source-number = 3 [ set pcolor blue ] ]
+      if resource-source-number = 3 [ set pcolor blue ]
+  ]
+  [set pcolor black]
+  ]
 end
 
 to go
@@ -200,6 +201,7 @@ to year-end
   [
       set stopNext TRUE
   ]
+  recolor-patch
 end
 
 
