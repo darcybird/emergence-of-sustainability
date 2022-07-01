@@ -14,13 +14,8 @@ globals[
 
 
 patches-own [
-<<<<<<< HEAD
-  resource
-  resource-source-number
-=======
   resource ; for the turtles to gather from for food
   resource-source-number ; number to identify food source
->>>>>>> gather
 ]
 
 turtles-own [
@@ -76,14 +71,7 @@ to setup-resource
   ]
 end
 
-<<<<<<< HEAD
-to recolor-patch
-  if resource > 0
-  [
-    if resource-source-number = 1 [set pcolor cyan]
-    if resource-source-number = 2 [set pcolor sky]
-    if resource-source-number = 3 [set pcolor blue]
-=======
+
 to recolor-patch ; give color to resourced patches
   ask patches [
   ifelse resource > 0
@@ -92,8 +80,9 @@ to recolor-patch ; give color to resourced patches
       if resource-source-number = 2 [ set pcolor sky  ]
       if resource-source-number = 3 [ set pcolor blue ]
   ]
-  [set pcolor black]
->>>>>>> gather
+  [
+      set pcolor black
+    ]
   ]
 end
 
