@@ -192,7 +192,12 @@ to year-end
   [
     set age age + 1
     set coop-this-tick FALSE
+   reproduce
   ]
+  ;ask patches
+  ;[
+   ;regenerate
+  ;]
   set nTurtles count turtles
   if nTurtles = 0
   [
@@ -200,6 +205,26 @@ to year-end
   ]
 
 end
+
+
+to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 in food
+  if age > 18 and food > 10
+  [
+    hatch 1 [
+      set age 0
+    ]
+    show "I gave birth"
+  ]
+end
+
+;to regenerate; resources grow if depleted
+ ; ask patches
+  ;[
+   ; if resource < 2
+    ;[ set resource resource + .1
+    ;]
+  ;]
+;end
 
 to-report meanFood
   ifelse any? turtles
@@ -462,7 +487,7 @@ search-radius
 search-radius
 0
 1
-0.2
+1.0
 .1
 1
 NIL
@@ -477,7 +502,7 @@ cooperation-prob
 cooperation-prob
 0
 1
-0.1
+0.4
 .1
 1
 NIL
@@ -492,7 +517,7 @@ regeneration-rate
 regeneration-rate
 0
 1
-0.3
+0.1
 .1
 1
 NIL
