@@ -103,9 +103,6 @@ to shock  ;have patches change color to make the shock CLEAR
     set num-shocks num-shocks + 1
     set shock-power random-poisson 1
     set shock-power-dist lput shock-power shock-power-dist
-    ask patches [
-      set pcolor white
-    ]
     ask turtles [
     ifelse knowledge + food < shock-power
     [
@@ -210,9 +207,14 @@ end
 to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 in food
   if age > 18 and food > 10
   [
-    hatch 1 [
+    hatch 1
+    [
       set age 0
+      set food random-poisson 1
+      set knowledge 0
+      set shocks-survived 0
     ]
+    set food food - 10
     show "I gave birth"
   ]
 end
