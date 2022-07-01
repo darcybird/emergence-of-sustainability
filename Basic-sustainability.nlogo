@@ -1,21 +1,26 @@
 globals[
   stopNext ;basic. Assigned according to various conditions.
   nTurtles ;basic
-  cooperation-prob ; for cooperate
-  shock-prob ; for shock
+  ;cooperation-prob ; for cooperate
+  ; shock-prob ; for shock
   num-shocks ; keep track of # of shocks in the environemnt
   shock-power ; for each shock (max 1 per tick)
   shock-power-dist ; for the graph
-  search-radius ; for turtles to look for other turtles
+  ;search-radius ; for turtles to look for other turtles
   resource-patches
-  k-trade ; knowledge degradation via trade
+ ; k-trade ; knowledge degradation via trade
 ]
 
 
 
 patches-own [
+<<<<<<< HEAD
   resource
   resource-source-number
+=======
+  resource ; for the turtles to gather from for food
+  resource-source-number ; number to identify food source
+>>>>>>> gather
 ]
 
 turtles-own [
@@ -31,8 +36,8 @@ turtles-own [
 
 to setup
   ca ; clear all
-  setup-patches
-   ;setup-food
+  setup-resource
+  recolor-patch
   crt num-turtles [ ; create 10 turtles
     set size 2
     set age 0
@@ -40,27 +45,23 @@ to setup
     set knowledge random-poisson 1
    ; set label group
     setxy random-pxcor random-pycor ;random x and y coordinates
-    set food random-poisson 1
+    ; set food random-poisson 1
    ; set color resilience
     ; pendown ;see how turtles move
   ]
   set k-trade 0.1
   set search-radius 1
   set cooperation-prob 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
-  set shock-prob 0.1
+  ; set shock-prob 0.1
+  set regeneration-rate .1; modifies rate of resource regeneration
   set shock-power-dist (list)
   set nTurtles count turtles
   reset-ticks
 end
 
-to setup-patches
-  ask patches [
-    setup-resource
-    recolor-patch
-  ]
-end
-
 to setup-resource
+;; setup food source one on the right
+  ask patches [
   if (distancexy (0.6 * max-pxcor) 0) < 5
   [ set resource-source-number 1 ]
   ;; setup food source two on the lower-left
@@ -72,14 +73,27 @@ to setup-resource
   ;; set "food" at sources to either 1 or 2, randomly
   if resource-source-number > 0
   [ set resource one-of [1 2] ]
+  ]
 end
 
+<<<<<<< HEAD
 to recolor-patch
   if resource > 0
   [
     if resource-source-number = 1 [set pcolor cyan]
     if resource-source-number = 2 [set pcolor sky]
     if resource-source-number = 3 [set pcolor blue]
+=======
+to recolor-patch ; give color to resourced patches
+  ask patches [
+  ifelse resource > 0
+    [
+      if resource-source-number = 1 [ set pcolor cyan ]
+      if resource-source-number = 2 [ set pcolor sky  ]
+      if resource-source-number = 3 [ set pcolor blue ]
+  ]
+  [set pcolor black]
+>>>>>>> gather
   ]
 end
 
@@ -89,7 +103,7 @@ to go
  ; show shock-power
  ; show shock-power-dist
   move
-  ; gather
+  gather-food
   cooperate
   year-end
   plot-data
@@ -102,9 +116,6 @@ to shock  ;have patches change color to make the shock CLEAR
     set num-shocks num-shocks + 1
     set shock-power random-poisson 1
     set shock-power-dist lput shock-power shock-power-dist
-    ask patches [
-      set pcolor white
-    ]
     ask turtles [
     ifelse knowledge + food < shock-power
     [
@@ -138,10 +149,24 @@ to move ; make more complex if they need resources or knowledge
   ]
 end
 
-;to gather ; need resources to code
-;
-;
-;end
+
+to gather-food  ;; turtle procedure
+  ask turtles
+  [
+    if resource > 0
+    [
+    show "I'm gathering food"
+    set food food + 1     ;; pick up food
+      ask patch-here
+      [
+        set resource resource - 1        ;; and reduce the food source
+      ]
+    ;rt 180                   ;; and turn around
+    ;stop
+    ]
+  ]
+end
+
 
 to cooperate
   ask turtles
@@ -191,14 +216,20 @@ to year-end
   [
     set age age + 1
     set coop-this-tick FALSE
+    if age > 75
+    [
+      show "I'm dying due to old age."
+      die
+    ]
   ]
   set nTurtles count turtles
   if nTurtles = 0
   [
       set stopNext TRUE
   ]
-
+  recolor-patch
 end
+
 
 to-report meanFood
   ifelse any? turtles
@@ -421,6 +452,81 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles"
+
+SLIDER
+21
+167
+193
+200
+shock-prob
+shock-prob
+0
+1
+0.5
+.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+21
+204
+193
+237
+k-trade
+k-trade
+0
+1
+0.1
+.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+21
+241
+193
+274
+search-radius
+search-radius
+0
+1
+1.0
+.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+22
+276
+194
+309
+cooperation-prob
+cooperation-prob
+0
+1
+0.4
+.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+22
+312
+194
+345
+regeneration-rate
+regeneration-rate
+0
+1
+0.1
+.1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
