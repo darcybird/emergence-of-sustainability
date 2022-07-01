@@ -39,7 +39,7 @@ to setup
     set knowledge random-poisson 1
    ; set label group
     setxy random-pxcor random-pycor ;random x and y coordinates
-    set food random-poisson 1
+    ; set food random-poisson 1
    ; set color resilience
     ; pendown ;see how turtles move
   ]
@@ -84,14 +84,11 @@ end
 
 to go
   tick
-  ;ask patches [
-   ;   set pcolor green
-
   shock ; shock occurs first, then turtles respond.
  ; show shock-power
  ; show shock-power-dist
   move
-  ; gather
+  gather-food
   cooperate
   year-end
   plot-data
@@ -104,9 +101,6 @@ to shock  ;have patches change color to make the shock CLEAR
     set num-shocks num-shocks + 1
     set shock-power random-poisson 1
     set shock-power-dist lput shock-power shock-power-dist
-    ask patches [
-      set pcolor white
-    ]
     ask turtles [
     ifelse knowledge + food < shock-power
     [
@@ -132,10 +126,24 @@ to move ; make more complex if they need resources or knowledge
   ]
 end
 
-;to gather ; need resources to code
-;
-;
-;end
+
+to gather-food  ;; turtle procedure
+  ask turtles
+  [
+    if resource > 0
+    [
+    show "I'm gathering food"
+    set food food + 1     ;; pick up food
+      ask patch-here
+      [
+        set resource resource - 1        ;; and reduce the food source
+      ]
+    ;rt 180                   ;; and turn around
+    ;stop
+    ]
+  ]
+end
+
 
 to cooperate
   ask turtles
@@ -185,14 +193,15 @@ to year-end
   [
     set age age + 1
     set coop-this-tick FALSE
+    if age > 75 [die]
   ]
   set nTurtles count turtles
   if nTurtles = 0
   [
       set stopNext TRUE
   ]
-
 end
+
 
 to-report meanFood
   ifelse any? turtles
@@ -833,7 +842,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.0
+NetLogo 6.2.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
