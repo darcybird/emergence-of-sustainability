@@ -1,17 +1,11 @@
 globals[
   stopNext ;basic. Assigned according to various conditions.
   nTurtles ;basic
-  ;cooperation-prob ; for cooperate
-  ; shock-prob ; for shock
   num-shocks ; keep track of # of shocks in the environemnt
   shock-power ; for each shock (max 1 per tick)
   shock-power-dist ; for the graph
-  ;search-radius ; for turtles to look for other turtles
   resource-patches
- ; k-trade ; knowledge degradation via trade
 ]
-
-
 
 patches-own [
   resource ; for the turtles to gather from for food
@@ -36,18 +30,13 @@ to setup
   crt num-turtles [ ; create 10 turtles
     set size 2
     set age 0
-    ;set knowledge 0
-    set knowledge random-poisson 1
-   ; set label group
+    set knowledge 0
     setxy random-pxcor random-pycor ;random x and y coordinates
-    ; set food random-poisson 1
-   ; set color resilience
-    ; pendown ;see how turtles move
+    set food random-poisson 1
   ]
   set k-trade 0.1
   set search-radius 1
-  set cooperation-prob 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
-  ; set shock-prob 0.1
+ ; set cooperation-prob 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
   set regeneration-rate .1; modifies rate of resource regeneration
   set shock-power-dist (list)
   set nTurtles count turtles
@@ -88,12 +77,11 @@ end
 
 to go
   tick
-  shock ; shock occurs first, then turtles respond.
- ; show shock-power
- ; show shock-power-dist
+  shock ; shock occurs first, then turtles respond
   move
   gather-food
   cooperate
+  reproduce
   year-end
   plot-data
   if stopNext = TRUE [stop]
@@ -200,43 +188,22 @@ to cooperate
   ]
 end
 
-to year-end
-  ask turtles
-  [
-    set age age + 1
-    set coop-this-tick FALSE
-    if age > 75
-    [
-      show "I'm dying due to old age."
-      die
-    ]
-   reproduce
-  ]
-  ;ask patches
-  ;[
-   ;regenerate
-  ;]
-  set nTurtles count turtles
-  if nTurtles = 0
-  [
-      set stopNext TRUE
-  ]
-  recolor-patch
-end
-
 
 to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 in food
-  if age > 18 and food > 10
+  ask turtles
   [
-    hatch 1
+    if age > 18 and food > 10
     [
-      set age 0
-      set food random-poisson 1
-      set knowledge 0
-      set shocks-survived 0
+      hatch 1
+      [
+        set age 0
+        set food random-poisson 1
+        set knowledge 0
+        set shocks-survived 0
+      ]
+      ; set food food - 10
+      show "I gave birth"
     ]
-    set food food - 10
-    show "I gave birth"
   ]
 end
 
@@ -248,6 +215,27 @@ end
     ;]
   ;]
 ;end
+
+to year-end
+  ask turtles
+  [
+    set age age + 1
+    set coop-this-tick FALSE
+    if age > 150
+    [
+     ; show "I'm dying due to old age."
+     ; die
+    ]
+  ]
+  set nTurtles count turtles
+  if nTurtles = 0
+  [
+      set stopNext TRUE
+  ]
+  recolor-patch
+end
+
+
 
 to-report meanFood
   ifelse any? turtles
@@ -480,7 +468,7 @@ shock-prob
 shock-prob
 0
 1
-0.5
+0.1
 .1
 1
 NIL
@@ -509,9 +497,9 @@ SLIDER
 search-radius
 search-radius
 0
-1
+15
 1.0
-.1
+1
 1
 NIL
 HORIZONTAL
