@@ -14,8 +14,8 @@ globals[
 
 
 patches-own [
-  resource
- resource-source-number
+  resource ; for the turtles to gather from for food
+  resource-source-number ; number to identify food source
 ]
 
 turtles-own [
@@ -32,7 +32,6 @@ turtles-own [
 to setup
   ca ; clear all
   setup-patches
-   ;setup-food
   crt num-turtles [ ; create 10 turtles
     set size 2
     set age 0
@@ -55,13 +54,14 @@ to setup
 end
 
 to setup-patches
-  ask patches [
+    ask patches [
     setup-resource
     recolor-patch
-  ]
-end
+    ]
+  end
 
 to setup-resource
+;; setup food source one on the right
   if (distancexy (0.6 * max-pxcor) 0) < 5
   [ set resource-source-number 1 ]
   ;; setup food source two on the lower-left
@@ -75,15 +75,18 @@ to setup-resource
   [ set resource one-of [1 2] ]
 end
 
-to recolor-patch
+to recolor-patch ; give color to resourced patches
   if resource > 0
-  [ if resource-source-number = 1 [set pcolor cyan]
-  if resource-source-number = 2 [set pcolor sky]
-    if resource-source-number = 3 [set pcolor blue]]
+     [ if resource-source-number = 1 [ set pcolor cyan ]
+      if resource-source-number = 2 [ set pcolor sky  ]
+      if resource-source-number = 3 [ set pcolor blue ] ]
 end
 
 to go
   tick
+  ;ask patches [
+   ;   set pcolor green
+
   shock ; shock occurs first, then turtles respond.
  ; show shock-power
  ; show shock-power-dist
@@ -452,7 +455,7 @@ search-radius
 search-radius
 0
 1
-0.2
+1.0
 .1
 1
 NIL
@@ -467,7 +470,7 @@ cooperation-prob
 cooperation-prob
 0
 1
-0.1
+0.4
 .1
 1
 NIL
@@ -482,7 +485,7 @@ regeneration-rate
 regeneration-rate
 0
 1
-0.3
+0.1
 .1
 1
 NIL
