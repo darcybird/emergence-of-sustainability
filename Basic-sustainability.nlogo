@@ -15,7 +15,7 @@ globals[
 
 patches-own [
   resource
- resource-source-number
+  resource-source-number
 ]
 
 turtles-own [
@@ -77,9 +77,11 @@ end
 
 to recolor-patch
   if resource > 0
-  [ if resource-source-number = 1 [set pcolor cyan]
-  if resource-source-number = 2 [set pcolor sky]
-    if resource-source-number = 3 [set pcolor blue]]
+  [
+    if resource-source-number = 1 [set pcolor cyan]
+    if resource-source-number = 2 [set pcolor sky]
+    if resource-source-number = 3 [set pcolor blue]
+  ]
 end
 
 to go
@@ -124,8 +126,16 @@ end
 to move ; make more complex if they need resources or knowledge
   ask turtles
   [
-   face one-of neighbors
-   fd 1
+    ifelse food < 5
+    [
+
+
+
+    ]
+    [
+     face one-of neighbors
+     fd 1
+    ]
   ]
 end
 
@@ -830,7 +840,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.0
+NetLogo 6.2.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
