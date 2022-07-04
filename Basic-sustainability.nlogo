@@ -46,16 +46,24 @@ to setup-resource
 ;; setup food source one on the right
   ask patches [
   if (distancexy (0.6 * max-pxcor) 0) < 5
-  [ set resource-source-number 1 ]
+    [
+      set resource-source-number 1
+    ]
   ;; setup food source two on the lower-left
   if (distancexy (-0.6 * max-pxcor) (-0.6 * max-pycor)) < 5
-  [ set resource-source-number 2 ]
+    [
+      set resource-source-number 2
+    ]
   ;; setup food source three on the upper-left
   if (distancexy (-0.8 * max-pxcor) (0.8 * max-pycor)) < 5
-  [ set resource-source-number 3 ]
+    [
+      set resource-source-number 3
+    ]
   ;; set "food" at sources to either 1 or 2, randomly
   if resource-source-number > 0
-  [ set resource one-of [1 2] ]
+    [
+      set resource one-of [1 2]
+    ]
   ]
 end
 
@@ -112,11 +120,10 @@ end
 to move ; make more complex if they need resources or knowledge
   ask turtles
   [
-    ifelse food < 5
+    ifelse food < 1
     [
-
-
-
+      face one-of patches with [resource-source-number > 0]
+      fd 5
     ]
     [
      face one-of neighbors
@@ -525,7 +532,7 @@ old-age
 old-age
 0
 1000
-250.0
+100.0
 50
 1
 NIL
