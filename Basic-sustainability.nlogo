@@ -212,12 +212,12 @@ to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 i
 end
 
 ;to regenerate; resources grow if depleted
- ; ask patches
+  ;ask patches
   ;[
-   ; if resource < 2
-    ;[ set resource resource + .1
-    ;]
-  ;]
+    ;if resource < 2
+   ; [ set resource resource + .1
+  ;  ]
+ ; ]
 ;end
 
 to year-end
