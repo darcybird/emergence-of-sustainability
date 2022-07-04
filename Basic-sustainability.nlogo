@@ -6,6 +6,7 @@ globals[
   shock-power-dist ; for the graph
   resource-patches
 ]
+;
 
 patches-own [
   resource ; for the turtles to gather from for food
