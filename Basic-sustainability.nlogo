@@ -36,7 +36,6 @@ to setup
   ]
   set k-trade 0.1
   set search-radius 1
- ; set cooperation-prob 0.4 ; Modifies turtle movement. Turtles move randomly 1-q % of the time. See "to move"
   set regeneration-rate .1; modifies rate of resource regeneration
   set shock-power-dist (list)
   set nTurtles count turtles
@@ -96,7 +95,7 @@ to shock  ;have patches change color to make the shock CLEAR
     ask turtles [
     ifelse knowledge + food < shock-power
     [
-      show "I died due to the shock!"
+      ;show "I died due to the shock!"
       die
     ]
     [
@@ -132,14 +131,12 @@ to gather-food  ;; turtle procedure
   [
     if resource > 0
     [
-    show "I'm gathering food"
+    ;show "I'm gathering food"
     set food food + 1     ;; pick up food
       ask patch-here
       [
         set resource resource - 1        ;; and reduce the food source
       ]
-    ;rt 180                   ;; and turn around
-    ;stop
     ]
   ]
 end
@@ -202,7 +199,7 @@ to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 i
         set shocks-survived 0
       ]
       ; set food food - 10
-      show "I gave birth"
+      ;show "I gave birth"
     ]
   ]
 end
@@ -221,10 +218,10 @@ to year-end
   [
     set age age + 1
     set coop-this-tick FALSE
-    if age > 150
+    if age > old-age
     [
-     ; show "I'm dying due to old age."
-     ; die
+     ;show "I'm dying due to old age."
+     die
     ]
   ]
   set nTurtles count turtles
@@ -312,7 +309,7 @@ num-turtles
 num-turtles
 0
 50
-22.0
+50.0
 1
 1
 NIL
@@ -506,21 +503,6 @@ HORIZONTAL
 
 SLIDER
 22
-276
-194
-309
-cooperation-prob
-cooperation-prob
-0
-1
-0.4
-.1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-22
 312
 194
 345
@@ -530,6 +512,21 @@ regeneration-rate
 1
 0.1
 .1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+22
+347
+194
+380
+old-age
+old-age
+0
+1000
+250.0
+50
 1
 NIL
 HORIZONTAL
