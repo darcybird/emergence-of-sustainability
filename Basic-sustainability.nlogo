@@ -82,6 +82,7 @@ to go
   gather-food
   cooperate
   reproduce
+  regenerate
   year-end
   plot-data
   if stopNext = TRUE [stop]
@@ -207,14 +208,15 @@ to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 i
   ]
 end
 
-;to regenerate; resources grow if depleted
-  ;ask patches
-  ;[
-    ;if resource < 2
-   ; [ set resource resource + .1
-  ;  ]
- ; ]
-;end
+to regenerate; resources grow if depleted
+  ask patches
+  [
+    if resource < 2
+    [ set resource resource + .1
+    ]
+  ]
+  show "Food grew back!"
+end
 
 to year-end
   ask turtles
@@ -528,7 +530,7 @@ regeneration-rate
 regeneration-rate
 0
 1
-0.1
+0.9
 .1
 1
 NIL
