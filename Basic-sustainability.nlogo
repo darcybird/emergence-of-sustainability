@@ -87,6 +87,7 @@ to go
   shock ; shock occurs first, then turtles respond
   move ; move to resources
   gather-food ; gather resources
+  consume; eat food each tick
   cooperate ; then cooperate
   reproduce ; make babies
   regenerate ; regenerate resources
@@ -128,20 +129,20 @@ to move ; make more complex if they need resources or knowledge
       face one-of patches with [resource-source-number > 0]
       fd random 5
     ]
-    [
-      ; if they don't have food, they go find knowledge
-      ifelse knowledge < 1
-      [
-        face one-of turtles with [knowledge > 1]
-        fd random 5
-      ]
+   ; [
+  ;    ; if they don't have food, they go find knowledge
+   ;   ifelse knowledge < 1
+ ;     [
+     ;   face one-of turtles with [knowledge > 1]
+    ;    fd random 5
+   ;   ]
       [
         ; if they have food and knowledge, they wander around bumping into one-another
        face one-of neighbors
        fd 1
       ]
     ]
-  ]
+ ; ]
 end
 
 to consume ;; turtles eat to move (i.e. every tick)
