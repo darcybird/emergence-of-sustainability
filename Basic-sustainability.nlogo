@@ -191,6 +191,8 @@ to cooperate
             fd 1
           ]
           [
+            if [knowledge] of self >[knowledge] of myself  ; do i know less than you?"
+            [
             ask myself
            [
               set knowledge knowledge + ([knowledge] of self * k-trade)
@@ -201,6 +203,7 @@ to cooperate
             fd 1
             ;set knowledge knowledge + ([knowledge] of self * k-trade )
            ;     show knowledge
+            ]
           ]
         ]
       ]
