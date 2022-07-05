@@ -6,7 +6,6 @@ globals[
   shock-power-dist ; for the graph
   resource-patches
 ]
-;
 
 patches-own [
   resource ; for the turtles to gather from for food
@@ -30,8 +29,8 @@ to setup
   recolor-patch
   crt num-turtles [ ; create 10 turtles
     set size 2
-    set age 0
-    set knowledge 0
+    set age 0 + random 75
+    set knowledge 0 + random 25
     setxy random-pxcor random-pycor ;random x and y coordinates
     set food random-poisson 1
   ]
