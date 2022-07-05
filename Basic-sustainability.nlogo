@@ -169,39 +169,43 @@ to cooperate
   if any? other turtles in-radius search-radius [ ; one turtle looks around
         set cooperate-count cooperate-count + 1
         set coop-this-tick TRUE
-       ; show "I'm beginning this trade"
-        ;show knowledge
+        show "I'm beginning this trade"
+        show knowledge
         ask one-of other turtles in-radius search-radius ; asks a nearby turtle "what's up"
         [
           set cooperate-count cooperate-count + 1
           set coop-this-tick TRUE
-       ;   show "I am the recipient of this trade"
-       ;   show knowledge
-          ifelse [knowledge] of self > [knowledge] of myself  ; asked turtle asks back "do you know more than me?"
+          show knowledge
+          ifelse [knowledge] of self < [knowledge] of myself  ; do i know less than you?"
           [
-            ask myself ; you DO know more than me
+            ask self
             [
               set knowledge knowledge + ([knowledge] of myself * k-trade) ;give me your knowledge plz
-             ; show "Trade Sanity Check"
-             ; show knowledge
-              ]
-            ;  set knowledge knowledge - ([knowledge] of self * k-trade )     ; that turtle loses knowledge  (save code for resources)
-             ; show knowledge
+              show "I am the recipient of this trade"
+              ;show "Trade Sanity Check"
+              show knowledge
+               ]
+             ;  set knowledge knowledge - ([knowledge] of self * k-trade )     ; that turtle loses knowledge  (save code for resources)
+              ;show knowledge
+             set heading 180
+            fd 1
           ]
           [
-           ; ask myself
-           ; [
-           ;   set knowledge knowledge - ([knowledge] of myself * k-trade)
-            ;  show "Trade Sanity Check"
-            ;    show knowledge
-            ;  ]
-            set knowledge knowledge + ([knowledge] of self * k-trade )
+            ask myself
+           [
+              set knowledge knowledge + ([knowledge] of self * k-trade)
+              show "I am the recipient of this trade"
+              show knowledge
+             ]
+            set heading 180
+            fd 1
+            ;set knowledge knowledge + ([knowledge] of self * k-trade )
            ;     show knowledge
           ]
         ]
       ]
     ]
-  ]
+   ]
 end
 
 
