@@ -226,8 +226,12 @@ end
 to regenerate; resources grow if depleted
   ask patches ; have the resources regrow up to 2 resources
   [
-    if resource < 2
-    [ set resource resource + .1
+    if resource-source-number > 0
+    [
+      if resource < 2
+      [
+        set resource resource + .1
+      ]
     ]
   ]
  ; show "Food grew back!"
@@ -329,7 +333,7 @@ num-turtles
 num-turtles
 0
 50
-50.0
+4.0
 1
 1
 NIL
