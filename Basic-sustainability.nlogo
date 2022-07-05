@@ -167,12 +167,11 @@ to cooperate
   [
     if coop-this-tick = FALSE  ; turtles can only cooperate once per turn
     [
-  if any? other turtles in-radius search-radius [ ; one turtle looks around
-        set cooperate-count cooperate-count + 1
-        set coop-this-tick TRUE
+      if any? other turtles in-radius search-radius with [ coop-this-tick = FALSE ]
+      [ ; one turtle looks around
        ; show "I'm beginning this trade"
        ; show knowledge
-        ask one-of other turtles in-radius search-radius ; asks a nearby turtle "what's up"
+        ask one-of other turtles in-radius search-radius with [ coop-this-tick = FALSE ]  ; asks a nearby turtle "what's up"
         [
           set cooperate-count cooperate-count + 1
           set coop-this-tick TRUE
@@ -181,10 +180,12 @@ to cooperate
           [
             ask self
             [
-              set knowledge knowledge + 0.5 ;give me your knowledge plz
+              set knowledge knowledge + 0.1 ;give me your knowledge plz
            ;   show "I am the recipient of this trade"
               ;show "Trade Sanity Check"
      ;         show knowledge
+              set cooperate-count cooperate-count + 1
+              set coop-this-tick TRUE
                ]
              ;  set knowledge knowledge - ([knowledge] of self * k-trade )     ; that turtle loses knowledge  (save code for resources)
               ;show knowledge
@@ -196,7 +197,7 @@ to cooperate
             [
             ask myself
            [
-              set knowledge knowledge + 0.5
+              set knowledge knowledge + 0.1
          ;     show "I am the recipient of this trade"
          ;     show knowledge
              ]
@@ -296,7 +297,13 @@ to plot-data
   set-plot-pen-mode 1
   set-plot-pen-interval 1
   ;set-plot-x-range 0 5
-  histogram [knowledge] of turtles          ;;This plots a histogram of  food distribution
+  histogram [knowledge] of turtles          ;;This plots a histogram of all turtle knowledges
+
+    set-current-plot "nCooperations"
+  set-plot-pen-mode 1
+  set-plot-pen-interval 1
+  ;set-plot-x-range 0 5
+  histogram [cooperate-count] of turtles          ;;This plots a histogram of all current turtle ages
 
  ; set-current-plot "Shocks Survived"
  ; set-plot-pen-mode 1
@@ -592,6 +599,24 @@ k-trade
 1
 NIL
 HORIZONTAL
+
+PLOT
+857
+500
+1057
+650
+nCooperations
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot count turtles"
 
 @#$#@#$#@
 ## WHAT IS IT?
