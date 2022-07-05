@@ -88,6 +88,7 @@ to go
   shock ; shock occurs first, then turtles respond
   move ; move to resources
   gather-food ; gather resources
+  consume; eat food each tick
   cooperate ; then cooperate
   reproduce ; make babies
   regenerate ; regenerate resources
@@ -105,7 +106,7 @@ to shock  ;have patches change color to make the shock CLEAR
     ask turtles [
     ifelse knowledge + food < shock-power
     [
-      ;show "I died due to the shock!"
+      show "I died due to the shock!"
       die
     ]
     [
@@ -129,19 +130,25 @@ to move ; make more complex if they need resources or knowledge
       face one-of patches with [resource-source-number > 0]
       fd random 5
     ]
-    [
-      ; if they don't have food, they go find knowledge
-      ifelse knowledge < 1
-      [
-        face one-of turtles with [knowledge > 1]
-        fd random 5
-      ]
+   ; [
+  ;    ; if they don't have food, they go find knowledge
+   ;   ifelse knowledge < 1
+ ;     [
+     ;   face one-of turtles with [knowledge > 1]
+    ;    fd random 5
+   ;   ]
       [
         ; if they have food and knowledge, they wander around bumping into one-another
        face one-of neighbors
        fd 1
       ]
     ]
+ ; ]
+end
+
+to consume ;; turtles eat to move (i.e. every tick)
+  ask turtles
+  [set food food - 1
   ]
 end
 
@@ -151,7 +158,7 @@ to gather-food  ;; turtle procedure
   [
     if resource > 0
     [
-    ;show "I'm gathering food"
+    show "I'm gathering food"
     set food food + 1     ;; pick up food
       ask patch-here
       [
@@ -406,10 +413,10 @@ NIL
 1
 
 PLOT
-912
-318
-1112
-468
+848
+325
+1048
+475
 nTurtles over Time
 ticks
 nTurtles
@@ -424,10 +431,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles"
 
 PLOT
-841
-167
-1041
-317
+718
+172
+918
+322
 Shocks
 NIL
 NIL
@@ -442,10 +449,10 @@ PENS
 "pen-0" 1.0 0 -7500403 true "" ""
 
 PLOT
-981
-159
-1181
-309
+958
+171
+1158
+321
 Ages
 age
 count
@@ -460,10 +467,10 @@ PENS
 "pen-0" 1.0 0 -7500403 true "" "plot count turtles"
 
 PLOT
-866
-10
-1066
-160
+718
+11
+918
+161
 Food
 NIL
 NIL
@@ -478,9 +485,9 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles"
 
 PLOT
-1070
+958
 10
-1270
+1158
 160
 Knowledge
 NIL
@@ -504,7 +511,7 @@ shock-prob
 shock-prob
 0
 1
-0.1
+0.2
 .1
 1
 NIL
@@ -563,9 +570,9 @@ SLIDER
 old-age
 old-age
 0
-1000
-100.0
-50
+100
+75.0
+1
 1
 NIL
 HORIZONTAL
