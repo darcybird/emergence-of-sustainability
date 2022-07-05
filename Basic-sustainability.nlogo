@@ -40,6 +40,7 @@ to setup
   set shock-power-dist (list)
   set nTurtles count turtles
   reset-ticks
+  random-seed 47822
 end
 
 to setup-resource
@@ -180,7 +181,7 @@ to cooperate
           [
             ask self
             [
-              set knowledge knowledge + ([knowledge] of myself * k-trade) ;give me your knowledge plz
+              set knowledge knowledge + 0.5 ;give me your knowledge plz
               show "I am the recipient of this trade"
               ;show "Trade Sanity Check"
               show knowledge
@@ -195,7 +196,7 @@ to cooperate
             [
             ask myself
            [
-              set knowledge knowledge + ([knowledge] of self * k-trade)
+              set knowledge knowledge + 0.5
               show "I am the recipient of this trade"
               show knowledge
              ]
