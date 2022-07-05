@@ -111,7 +111,7 @@ to shock  ;have patches change color to make the shock CLEAR
       set relative-shock-power shock-power - knowledge
       set food food - relative-shock-power
       set relative-shock-power 0
-      set knowledge knowledge + 0.1 * shock-power
+      set knowledge knowledge + knowledge-gain * shock-power
       set shocks-survived shocks-survived + 1
     ]
   ]
@@ -536,6 +536,21 @@ old-age
 1000
 100.0
 50
+1
+NIL
+HORIZONTAL
+
+SLIDER
+22
+277
+194
+310
+knowledge-gain
+knowledge-gain
+0
+1
+0.1
+0.1
 1
 NIL
 HORIZONTAL
