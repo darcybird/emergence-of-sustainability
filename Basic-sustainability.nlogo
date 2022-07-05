@@ -188,7 +188,7 @@ to cooperate
           [
             ask self
             [
-              set knowledge knowledge + 0.1 ;give me your knowledge plz
+              set knowledge knowledge + knowledge-gain ;give me your knowledge plz
            ;   show "I am the recipient of this trade"
               ;show "Trade Sanity Check"
      ;         show knowledge
@@ -205,7 +205,7 @@ to cooperate
             [
             ask myself
            [
-              set knowledge knowledge + 0.1
+              set knowledge knowledge + knowledge-gain
          ;     show "I am the recipient of this trade"
          ;     show knowledge
              ]
@@ -247,7 +247,7 @@ to regenerate; resources grow if depleted
     [
       if resource < 2
       [
-        set resource resource + .1
+        set resource resource + regeneration-rate
       ]
     ]
   ]
@@ -513,21 +513,6 @@ shock-prob
 0
 1
 0.2
-.1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-21
-204
-193
-237
-k-trade
-k-trade
-0
-1
-0.1
 .1
 1
 NIL
