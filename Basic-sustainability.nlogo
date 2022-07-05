@@ -86,8 +86,9 @@ to go
   tick
   shock ; shock occurs first, then turtles respond
   move ; move to resources
-  gather-food ; gather resources
-  cooperate ; then cooperate
+  costly-action ; gather OR cooperate
+;  gather-food ; gather resources
+;  cooperate ; then cooperate
   reproduce ; make babies
   regenerate ; regenerate resources
   year-end ; update global counters
@@ -130,43 +131,57 @@ to move ; make more complex if they need resources or knowledge
     ]
     [
       ; if they don't have food, they go find knowledge
-      ifelse knowledge < 1
-      [
-        face one-of turtles with [knowledge > 1]
-        fd random 5
-      ]
-      [
+ ;     ifelse knowledge < 1
+     ; [
+ ;       face one-of turtles with [knowledge > 1]
+  ;      fd random 5
+   ;   ]
+  ;    [
         ; if they have food and knowledge, they wander around bumping into one-another
        face one-of neighbors
        fd 1
-      ]
+
+   ;   ]
     ]
   ]
 end
 
-
-to gather-food  ;; turtle procedure
+to costly-action
   ask turtles
   [
-    if resource > 0
+    ifelse random-float 1 < friendliness ; if I'm feeling selfish
     [
-    ;show "I'm gathering food"
-    set food food + 1     ;; pick up food
+      face one-of patches with [resource-source-number > 0] ; go toward patch with food
+      fd random 5
+      gather-food
+    ]
+    [
+      if coop-this-tick = FALSE
+      [
+        cooperate
+      ]
+    ]
+  ]
+
+end
+
+
+to gather-food  ;; turtle procedure
+  if resource > 0
+    [
+      ;show "I'm gathering food"
+      set food food + 1     ;; pick up food
       ask patch-here
       [
         set resource resource - 1        ;; and reduce the food source
       ]
-    ]
   ]
 end
 
 
 to cooperate
-  ask turtles
-  [
-    if coop-this-tick = FALSE  ; turtles can only cooperate once per turn
-    [
-  if any? other turtles in-radius search-radius [ ; one turtle looks around
+  if any? other turtles in-radius search-radius
+  [ ; one turtle looks around
         set cooperate-count cooperate-count + 1
         set coop-this-tick TRUE
        ; show "I'm beginning this trade"
@@ -200,8 +215,7 @@ to cooperate
           ]
         ]
       ]
-    ]
-  ]
+
 end
 
 
@@ -217,8 +231,8 @@ to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 i
         set knowledge 0
         set shocks-survived 0
       ]
-      ; set food food - 10
-      ;show "I gave birth"
+      set food food - 10
+      show "I gave birth"
     ]
   ]
 end
@@ -240,7 +254,7 @@ to year-end
     set coop-this-tick FALSE ; reset whether or not they cooperated
     if age > old-age ; kill the old turtles
     [
-     ;show "I'm dying due to old age."
+     show "I'm dying due to old age."
      die
     ]
   ]
@@ -329,7 +343,7 @@ num-turtles
 num-turtles
 0
 50
-50.0
+2.0
 1
 1
 NIL
@@ -421,24 +435,6 @@ false
 "" ""
 PENS
 "pen-0" 1.0 0 -7500403 true "" ""
-
-PLOT
-981
-159
-1181
-309
-Ages
-age
-count
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"pen-0" 1.0 0 -7500403 true "" "plot count turtles"
 
 PLOT
 866
@@ -580,6 +576,39 @@ k-trade
 1
 NIL
 HORIZONTAL
+
+SLIDER
+24
+419
+196
+452
+friendliness
+friendliness
+0
+1
+0.5
+0.1
+1
+NIL
+HORIZONTAL
+
+PLOT
+1063
+169
+1263
+319
+Ages
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"pen-0" 1.0 0 -7500403 true "" ""
 
 @#$#@#$#@
 ## WHAT IS IT?
