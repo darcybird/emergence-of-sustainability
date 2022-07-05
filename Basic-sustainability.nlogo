@@ -40,7 +40,7 @@ to setup
   set shock-power-dist (list)
   set nTurtles count turtles
   reset-ticks
-  random-seed 47822
+  ; random-seed 47822
 end
 
 to setup-resource
@@ -170,21 +170,21 @@ to cooperate
   if any? other turtles in-radius search-radius [ ; one turtle looks around
         set cooperate-count cooperate-count + 1
         set coop-this-tick TRUE
-        show "I'm beginning this trade"
-        show knowledge
+       ; show "I'm beginning this trade"
+       ; show knowledge
         ask one-of other turtles in-radius search-radius ; asks a nearby turtle "what's up"
         [
           set cooperate-count cooperate-count + 1
           set coop-this-tick TRUE
-          show knowledge
+       ;   show knowledge
           ifelse [knowledge] of self < [knowledge] of myself  ; do i know less than you?"
           [
             ask self
             [
               set knowledge knowledge + 0.5 ;give me your knowledge plz
-              show "I am the recipient of this trade"
+           ;   show "I am the recipient of this trade"
               ;show "Trade Sanity Check"
-              show knowledge
+     ;         show knowledge
                ]
              ;  set knowledge knowledge - ([knowledge] of self * k-trade )     ; that turtle loses knowledge  (save code for resources)
               ;show knowledge
@@ -197,8 +197,8 @@ to cooperate
             ask myself
            [
               set knowledge knowledge + 0.5
-              show "I am the recipient of this trade"
-              show knowledge
+         ;     show "I am the recipient of this trade"
+         ;     show knowledge
              ]
             set heading 180
             fd 1
@@ -225,7 +225,7 @@ to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 i
         set knowledge 0
         set shocks-survived 0
       ]
-      ; set food food - 10
+       set food food - 5
       ;show "I gave birth"
     ]
   ]
@@ -252,7 +252,7 @@ to year-end
     set coop-this-tick FALSE ; reset whether or not they cooperated
     if age > old-age ; kill the old turtles
     [
-     ;show "I'm dying due to old age."
+     ; show "I'm dying due to old age."
      die
     ]
   ]
@@ -341,7 +341,7 @@ num-turtles
 num-turtles
 0
 50
-4.0
+16.0
 1
 1
 NIL
