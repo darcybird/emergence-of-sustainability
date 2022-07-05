@@ -86,7 +86,7 @@ end
 to go
   tick
   shock ; shock occurs first, then turtles respond
-  move ; move to resources
+;  move ; move to resources
   costly-action ; gather OR cooperate
 ;  gather-food ; gather resources
 ;  cooperate ; then cooperate
@@ -166,7 +166,6 @@ to costly-action
 
 end
 
-
 to gather-food  ;; turtle procedure
   if resource > 0
     [
@@ -178,7 +177,6 @@ to gather-food  ;; turtle procedure
       ]
   ]
 end
-
 
 to cooperate
   if any? other turtles in-radius search-radius
@@ -219,12 +217,11 @@ to cooperate
             fd 1
             ;set knowledge knowledge + ([knowledge] of self * k-trade )
            ;     show knowledge
-            ]
-          ]
         ]
       ]
     ]
-   ]
+  ]
+
 end
 
 
@@ -240,7 +237,7 @@ to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 i
         set knowledge 0
         set shocks-survived 0
       ]
-       set food food - 5
+       set food food - 10
       ;show "I gave birth"
     ]
   ]
@@ -298,6 +295,7 @@ to plot-data
   set-current-plot "Ages"
   set-plot-pen-mode 1
   set-plot-pen-interval 1
+  set-plot-x-range 0 old-age
   ;set-plot-x-range 0 5
   histogram [age] of turtles          ;;This plots a histogram of all current turtle ages
 
@@ -356,7 +354,7 @@ num-turtles
 num-turtles
 0
 50
-50.0
+26.0
 1
 1
 NIL
