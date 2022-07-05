@@ -29,13 +29,13 @@ to setup
   recolor-patch
   crt num-turtles [ ; create 10 turtles
     set size 2
-    set age 0 + random 75
-    set knowledge 0 + random 25
+    set age 0 + random 75 ; random age
+    set knowledge 0 + random 5 ;random pre-acquired knowledge
     setxy random-pxcor random-pycor ;random x and y coordinates
-    set food random-poisson 1
+    set food random-poisson 1 ; max ~ 5
   ]
-  set k-trade 0.1
-  set search-radius 1
+  ; set k-trade 0.1 ; the proportion of knowledge acquired via cooperation
+  set search-radius 1 ; distance at which cooperation can occur
   set regeneration-rate .1; modifies rate of resource regeneration
   set shock-power-dist (list)
   set nTurtles count turtles
@@ -72,7 +72,7 @@ to recolor-patch ; give color to resourced patches
   ask patches [
   ifelse resource > 0
     [
-      if resource-source-number = 1 [ set pcolor cyan ]
+      if resource-source-number = 1 [ set pcolor cyan ] ; 3 difference resource patches in different areas
       if resource-source-number = 2 [ set pcolor sky  ]
       if resource-source-number = 3 [ set pcolor blue ]
   ]
@@ -85,23 +85,22 @@ end
 to go
   tick
   shock ; shock occurs first, then turtles respond
-  move
-  gather-food
-  consume
-  cooperate
-  reproduce
-  regenerate
-  year-end
+  move ; move to resources
+  gather-food ; gather resources
+  cooperate ; then cooperate
+  reproduce ; make babies
+  regenerate ; regenerate resources
+  year-end ; update global counters
   plot-data
   if stopNext = TRUE [stop]
   if ticks >= 1000 [stop]
 end
 
 to shock  ;have patches change color to make the shock CLEAR
-  if random-float 1 < shock-prob [
-    set num-shocks num-shocks + 1
-    set shock-power random-poisson 1
-    set shock-power-dist lput shock-power shock-power-dist
+  if random-float 1 < shock-prob [ ; shock-prob % of time, a shock occurs
+    set num-shocks num-shocks + 1 ;count total # of shocks experienced by the society
+    set shock-power random-poisson 1 ;more small shocks, fewer large shocks. Max power ~5
+    set shock-power-dist lput shock-power shock-power-dist ; adds shock power to a list of shock powers for the hist on front
     ask turtles [
     ifelse knowledge + food < shock-power
     [
@@ -109,11 +108,13 @@ to shock  ;have patches change color to make the shock CLEAR
       die
     ]
     [
-      set relative-shock-power shock-power - knowledge
-      set food food - relative-shock-power
-      set relative-shock-power 0
-      set knowledge knowledge + 0.1 * shock-power
-      set shocks-survived shocks-survived + 1
+       ; show knowledge
+        set relative-shock-power shock-power - knowledge ; each turtle experiences a shock power that varies according to its knowledge
+        set food food - relative-shock-power
+        set relative-shock-power 0
+        set knowledge knowledge + knowledge-gain * shock-power ; gain knowledge per shock
+        set shocks-survived shocks-survived + 1 ; keep track of how many shocks each turtle has experienced
+       ; show knowledge
     ]
   ]
   ]
@@ -122,14 +123,23 @@ end
 to move ; make more complex if they need resources or knowledge
   ask turtles
   [
-    ifelse food < 1
+    ifelse food < 1 ; if they have no food, they go find food
     [
       face one-of patches with [resource-source-number > 0]
-      fd 5
+      fd random 5
     ]
     [
-     face one-of neighbors
-     fd 1
+      ; if they don't have food, they go find knowledge
+      ifelse knowledge < 1
+      [
+        face one-of turtles with [knowledge > 1]
+        fd random 5
+      ]
+      [
+        ; if they have food and knowledge, they wander around bumping into one-another
+       face one-of neighbors
+       fd 1
+      ]
     ]
   ]
 end
@@ -204,9 +214,9 @@ end
 to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 in food
   ask turtles
   [
-    if age > 18 and food > 10
+    if age > 18 and food > 10 ; turtles need to have food and be above 18 y.o. to make babies
     [
-      hatch 1
+      hatch 1 ; hatching produces a duplicate turtle COLOR, but the baby begins with the below things:
       [
         set age 0
         set food random-poisson 1
@@ -220,32 +230,32 @@ to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 i
 end
 
 to regenerate; resources grow if depleted
-  ask patches
+  ask patches ; have the resources regrow up to 2 resources
   [
     if resource < 2
     [ set resource resource + .1
     ]
   ]
-  show "Food grew back!"
+ ; show "Food grew back!"
 end
 
 to year-end
   ask turtles
   [
-    set age age + 1
-    set coop-this-tick FALSE
-    if age > old-age
+    set age age + 1 ; age up the turtles
+    set coop-this-tick FALSE ; reset whether or not they cooperated
+    if age > old-age ; kill the old turtles
     [
      show "I'm dying due to old age."
      die
     ]
   ]
-  set nTurtles count turtles
-  if nTurtles = 0
+  set nTurtles count turtles ; update counter
+  if nTurtles = 0 ; if there are no turtles, stop the code
   [
       set stopNext TRUE
   ]
-  recolor-patch
+  recolor-patch ; update the resource colors whether or not we have resources there or not
 end
 
 
@@ -543,6 +553,36 @@ old-age
 100
 75.0
 1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+22
+277
+194
+310
+knowledge-gain
+knowledge-gain
+0
+1
+0.1
+0.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+23
+383
+195
+416
+k-trade
+k-trade
+0
+1
+0.1
+0.1
 1
 NIL
 HORIZONTAL
