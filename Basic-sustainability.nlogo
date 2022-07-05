@@ -8,8 +8,8 @@ globals[
 ]
 
 patches-own [
+  producing
   resource ; for the turtles to gather from for food
-  resource-source-number ; number to identify food source
 ]
 
 turtles-own [
@@ -26,7 +26,6 @@ turtles-own [
 to setup
   ca ; clear all
   setup-resource
-  recolor-patch
   crt num-turtles [ ; create 10 turtles
     set size 2
     set age 0 + random 75 ; random age
@@ -45,43 +44,17 @@ end
 
 to setup-resource
 ;; setup food source one on the right
-  ask patches [
-  if (distancexy (0.6 * max-pxcor) 0) < 5
-    [
-      set resource-source-number 1
-    ]
-  ;; setup food source two on the lower-left
-  if (distancexy (-0.6 * max-pxcor) (-0.6 * max-pycor)) < 5
-    [
-      set resource-source-number 2
-    ]
-  ;; setup food source three on the upper-left
-  if (distancexy (-0.8 * max-pxcor) (0.8 * max-pycor)) < 5
-    [
-      set resource-source-number 3
-    ]
-  ;; set "food" at sources to either 1 or 2, randomly
-  if resource-source-number > 0
-    [
-      set resource one-of [1 2]
-    ]
-  ]
-end
-
-
-to recolor-patch ; give color to resourced patches
-  ask patches [
-  ifelse resource > 0
-    [
-      if resource-source-number = 1 [ set pcolor cyan ] ; 3 difference resource patches in different areas
-      if resource-source-number = 2 [ set pcolor sky  ]
-      if resource-source-number = 3 [ set pcolor blue ]
-  ]
+  ask n-of 20 patches
   [
-      set pcolor black
+    ask n-of 10 patches in-radius 5
+    [
+      set producing TRUE
+      set resource one-of [0 1 2]
+      set pcolor yellow
     ]
   ]
 end
+
 
 to go
   tick
@@ -127,18 +100,10 @@ to move ; make more complex if they need resources or knowledge
   [
     ifelse food < 1 ; if they have no food, they go find food
     [
-      face one-of patches with [resource-source-number > 0]
+      face one-of patches with [resource > 0]
       fd random 5
     ]
-   ; [
-  ;    ; if they don't have food, they go find knowledge
-   ;   ifelse knowledge < 1
- ;     [
-     ;   face one-of turtles with [knowledge > 1]
-    ;    fd random 5
-   ;   ]
-      [
-        ; if they have food and knowledge, they wander around bumping into one-another
+    [      ; if they have food, they wander around bumping into one-another
        face one-of neighbors
        fd 1
       ]
@@ -150,6 +115,11 @@ to consume ;; turtles eat to move (i.e. every tick)
   ask turtles
   [
     set food (food - metabolism)
+    if food < 0
+    [
+      die
+      show "I starved to death"
+    ]
   ]
 end
 
@@ -159,11 +129,15 @@ to gather-food  ;; turtle procedure
   [
     if resource > 0
     [
-    show "I'm gathering food"
+   ; show "I'm gathering food"
     set food food + 1     ;; pick up food
       ask patch-here
       [
         set resource resource - 1        ;; and reduce the food source
+        if resource < 1
+        [
+        set pcolor black
+        ]
       ]
     ]
   ]
@@ -225,7 +199,7 @@ end
 to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 in food
   ask turtles
   [
-    if age > 18 and food > 10 ; turtles need to have food and be above 18 y.o. to make babies
+    if age > 18 and food > reproduction-cost ; turtles need to have food and be above 18 y.o. to make babies
     [
       hatch 1 ; hatching produces a duplicate turtle COLOR, but the baby begins with the below things:
       [
@@ -234,7 +208,7 @@ to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 i
         set knowledge 0
         set shocks-survived 0
       ]
-       set food food - 5
+       set food ( food - reproduction-cost )
       ;show "I gave birth"
     ]
   ]
@@ -243,13 +217,14 @@ end
 to regenerate; resources grow if depleted
   ask patches ; have the resources regrow up to 2 resources
   [
-    if resource-source-number > 0
+    if producing = TRUE
     [
       if resource < 2
       [
-        set resource resource + regeneration-rate
+        set resource ( resource + regeneration-rate )
       ]
     ]
+    if resource >= 1 [set pcolor yellow]
   ]
  ; show "Food grew back!"
 end
@@ -261,18 +236,17 @@ to year-end
     set coop-this-tick FALSE ; reset whether or not they cooperated
     if age > old-age ; kill the old turtles
     [
-     ; show "I'm dying due to old age."
-     die
+      show "I'm dying due to old age."
+      die
     ]
   ]
+
   set nTurtles count turtles ; update counter
   if nTurtles = 0 ; if there are no turtles, stop the code
   [
       set stopNext TRUE
   ]
-  recolor-patch ; update the resource colors whether or not we have resources there or not
 end
-
 
 
 to-report meanFood
@@ -356,7 +330,7 @@ num-turtles
 num-turtles
 0
 50
-16.0
+21.0
 1
 1
 NIL
@@ -512,7 +486,7 @@ shock-prob
 shock-prob
 0
 1
-0.2
+0.0
 .1
 1
 NIL
@@ -587,7 +561,7 @@ metabolism
 metabolism
 0
 1
-0.1
+0.0
 0.1
 1
 NIL
@@ -610,6 +584,21 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles"
+
+SLIDER
+22
+202
+194
+235
+reproduction-cost
+reproduction-cost
+0
+10
+3.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
