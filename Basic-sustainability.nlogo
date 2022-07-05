@@ -148,7 +148,8 @@ end
 
 to consume ;; turtles eat to move (i.e. every tick)
   ask turtles
-  [set food food - 1
+  [
+    set food (food - metabolism)
   ]
 end
 
@@ -597,8 +598,8 @@ SLIDER
 383
 195
 416
-k-trade
-k-trade
+metabolism
+metabolism
 0
 1
 0.1
