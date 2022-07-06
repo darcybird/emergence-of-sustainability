@@ -79,7 +79,7 @@ to shock  ;have patches change color to make the shock CLEAR
     ask turtles [
     ifelse knowledge + food < shock-power
     [
-      show "I died due to the shock!"
+    ;  show "I died due to the shock!"
       die
     ]
     [
@@ -118,7 +118,7 @@ to consume ;; turtles eat to move (i.e. every tick)
     if food < 0
     [
       die
-      show "I starved to death"
+   ;   show "I starved to death"
     ]
   ]
 end
@@ -236,7 +236,7 @@ to year-end
     set coop-this-tick FALSE ; reset whether or not they cooperated
     if age > old-age ; kill the old turtles
     [
-      show "I'm dying due to old age."
+     ; show "I'm dying due to old age."
       die
     ]
   ]
@@ -281,11 +281,11 @@ to plot-data
   ;set-plot-x-range 0 5
   histogram [knowledge] of turtles          ;;This plots a histogram of all turtle knowledges
 
-    set-current-plot "nCooperations"
-  set-plot-pen-mode 1
-  set-plot-pen-interval 1
+ ; set-current-plot "nCooperations"
+ ; set-plot-pen-mode 1
+ ; set-plot-pen-interval 1
   ;set-plot-x-range 0 5
-  histogram [cooperate-count] of turtles          ;;This plots a histogram of all current turtle ages
+ ; histogram [cooperate-count] of turtles          ;;This plots a histogram of all current turtle ages
 
  ; set-current-plot "Shocks Survived"
  ; set-plot-pen-mode 1
@@ -330,7 +330,7 @@ num-turtles
 num-turtles
 0
 50
-21.0
+25.0
 1
 1
 NIL
@@ -561,29 +561,11 @@ metabolism
 metabolism
 0
 1
-0.0
+0.1
 0.1
 1
 NIL
 HORIZONTAL
-
-PLOT
-857
-500
-1057
-650
-nCooperations
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot count turtles"
 
 SLIDER
 22
@@ -594,7 +576,7 @@ reproduction-cost
 reproduction-cost
 0
 10
-3.0
+2.0
 1
 1
 NIL
