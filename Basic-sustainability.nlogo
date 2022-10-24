@@ -1,6 +1,7 @@
 globals[
   stopNext ;basic. Assigned according to various conditions.
   nTurtles ;basic
+   ; meal-prep ; amount of food each turtle wants before looking for cooperation
   num-shocks ; keep track of # of shocks in the environemnt
   shock-power ; for each shock (max 1 per tick)
   shock-power-dist ; for the graph
@@ -20,7 +21,7 @@ turtles-own [
   relative-shock-power ; shock-power adjusted by experience
   shocks-survived ; to track each individual's past traumas
   cooperate-count
-  coop-this-tick ; each turtle can only cooperate once/turn
+  action-this-tick ; each turtle can only cooperate once/turn
 ]
 
 to setup
@@ -59,9 +60,9 @@ end
 to go
   tick
   shock ; shock occurs first, then turtles respond
+  consume; eat food each tick
   move ; move to resources
   gather-food ; gather resources
-  consume; eat food each tick
   cooperate ; then cooperate
   reproduce ; make babies
   regenerate ; regenerate resources
@@ -95,7 +96,19 @@ to shock  ;have patches change color to make the shock CLEAR
   ]
 end
 
-to move ; make more complex if they need resources or knowledge
+to consume ;; turtles eat to move (i.e. every tick)
+  ask turtles
+  [
+    set food (food - metabolism)
+    if food < 0
+    [
+      die
+   ;   show "I starved to death"
+    ]
+  ]
+end
+
+to move ; need to make more complex if they need resources or knowledge
   ask turtles
   [
     ifelse food < 1 ; if they have no food, they go find food
@@ -111,17 +124,6 @@ to move ; make more complex if they need resources or knowledge
  ; ]
 end
 
-to consume ;; turtles eat to move (i.e. every tick)
-  ask turtles
-  [
-    set food (food - metabolism)
-    if food < 0
-    [
-      die
-   ;   show "I starved to death"
-    ]
-  ]
-end
 
 
 to gather-food  ;; turtle procedure
@@ -130,7 +132,8 @@ to gather-food  ;; turtle procedure
     if resource > 0
     [
    ; show "I'm gathering food"
-    set food food + 1     ;; pick up food
+      set food food + 1     ;; pick up food
+      set action-this-tick TRUE
       ask patch-here
       [
         set resource resource - 1        ;; and reduce the food source
@@ -147,16 +150,16 @@ end
 to cooperate
   ask turtles
   [
-    if coop-this-tick = FALSE  ; turtles can only cooperate once per turn
+    if action-this-tick = FALSE  ; turtles can only cooperate once per turn
     [
-      if any? other turtles in-radius search-radius with [ coop-this-tick = FALSE ]
+      if any? other turtles in-radius search-radius with [ action-this-tick = FALSE ]
       [ ; one turtle looks around
        ; show "I'm beginning this trade"
        ; show knowledge
-        ask one-of other turtles in-radius search-radius with [ coop-this-tick = FALSE ]  ; asks a nearby turtle "what's up"
+        ask one-of other turtles in-radius search-radius with [ action-this-tick = FALSE ]  ; asks a nearby turtle "what's up"
         [
           set cooperate-count cooperate-count + 1
-          set coop-this-tick TRUE
+          set action-this-tick TRUE
        ;   show knowledge
           ifelse [knowledge] of self < [knowledge] of myself  ; do i know less than you?"
           [
@@ -167,7 +170,7 @@ to cooperate
               ;show "Trade Sanity Check"
      ;         show knowledge
               set cooperate-count cooperate-count + 1
-              set coop-this-tick TRUE
+              set action-this-tick TRUE
                ]
              ;  set knowledge knowledge - ([knowledge] of self * k-trade )     ; that turtle loses knowledge  (save code for resources)
               ;show knowledge
@@ -233,7 +236,7 @@ to year-end
   ask turtles
   [
     set age age + 1 ; age up the turtles
-    set coop-this-tick FALSE ; reset whether or not they cooperated
+    set action-this-tick FALSE ; reset whether or not they cooperated
     if age > old-age ; kill the old turtles
     [
      ; show "I'm dying due to old age."
@@ -576,7 +579,7 @@ reproduction-cost
 reproduction-cost
 0
 10
-2.0
+1.0
 1
 1
 NIL
