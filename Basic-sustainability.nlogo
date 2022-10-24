@@ -116,12 +116,19 @@ to move ; need to make more complex if they need resources or knowledge
       face one-of patches with [resource > 0]
       fd random 5
     ]
-    [      ; if they have food, they wander around bumping into one-another
-       face one-of neighbors
-       fd 1
+
+    [
+      ifelse any? other turtles in-radius search-radius
+      [      ; if they have food, they head towards another turtle, provided one is nearby
+         face one-of other turtles in-radius search-radius
+         fd 1
+      ]
+      [ ; if they have food, they move randomly
+      face one-of neighbors
+      fd 1
       ]
     ]
- ; ]
+  ]
 end
 
 
