@@ -26,6 +26,7 @@ turtles-own [
 
 to setup
   ca ; clear all
+  random-seed seed
   setup-resource
   crt num-turtles [ ; create 10 turtles
     set size 2
@@ -256,6 +257,10 @@ to year-end
   [
       set stopNext TRUE
   ]
+  if nTurtles > 2000
+    [
+      set stopNext TRUE
+  ]
 end
 
 
@@ -263,6 +268,10 @@ to-report meanFood
   ifelse any? turtles
   [report mean [food] of turtles]
   [report 0]
+end
+
+to-report numTurtles
+  report count turtles
 end
 
 to plot-data
@@ -340,7 +349,7 @@ num-turtles
 num-turtles
 0
 50
-25.0
+100.0
 1
 1
 NIL
@@ -496,7 +505,7 @@ shock-prob
 shock-prob
 0
 1
-0.0
+0.2
 .1
 1
 NIL
@@ -541,7 +550,7 @@ old-age
 old-age
 0
 100
-75.0
+100.0
 1
 1
 NIL
@@ -556,7 +565,7 @@ knowledge-gain
 knowledge-gain
 0
 1
-0.1
+0.5
 0.1
 1
 NIL
@@ -571,7 +580,7 @@ metabolism
 metabolism
 0
 1
-0.1
+0.25
 0.1
 1
 NIL
@@ -586,6 +595,21 @@ reproduction-cost
 reproduction-cost
 0
 10
+0.5
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+22
+36
+194
+69
+seed
+seed
+0
+100
 1.0
 1
 1
@@ -938,6 +962,57 @@ NetLogo 6.2.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment random numbers" repetitions="1" sequentialRunOrder="false" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="1000"/>
+    <metric>numTurtles</metric>
+    <metric>meanFood</metric>
+    <steppedValueSet variable="seed" first="1" step="1" last="10"/>
+    <enumeratedValueSet variable="regeneration-rate">
+      <value value="0.1"/>
+      <value value="0.2"/>
+      <value value="0.5"/>
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-turtles">
+      <value value="10"/>
+      <value value="25"/>
+      <value value="50"/>
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="search-radius">
+      <value value="1"/>
+      <value value="2"/>
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="knowledge-gain">
+      <value value="0.1"/>
+      <value value="0.25"/>
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="old-age">
+      <value value="75"/>
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="metabolism">
+      <value value="0.1"/>
+      <value value="0.25"/>
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="shock-prob">
+      <value value="0"/>
+      <value value="0.1"/>
+      <value value="0.2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="reproduction-cost">
+      <value value="0.5"/>
+      <value value="1"/>
+      <value value="2"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
