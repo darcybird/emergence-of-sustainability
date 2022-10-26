@@ -138,7 +138,7 @@ end
 to gather-food  ;; turtle procedure
   ask turtles
   [
-    if resource > 0
+    if resource > 0 ; should DEFINITELY be equal to or greater than 1 but fine ok.
     [
    ; show "I'm gathering food"
       set food food + 1     ;; pick up food
@@ -356,7 +356,7 @@ num-turtles
 num-turtles
 0
 50
-100.0
+25.0
 1
 1
 NIL
@@ -512,7 +512,7 @@ shock-prob
 shock-prob
 0
 1
-0.0
+0.2
 .1
 1
 NIL
@@ -572,7 +572,7 @@ knowledge-gain
 knowledge-gain
 0
 1
-0.1
+0.5
 0.1
 1
 NIL
@@ -587,7 +587,7 @@ metabolism
 metabolism
 0
 1
-0.1
+0.25
 0.1
 1
 NIL
@@ -602,7 +602,7 @@ reproduction-cost
 reproduction-cost
 0
 10
-0.5
+2.0
 1
 1
 NIL
@@ -617,7 +617,7 @@ seed
 seed
 0
 100
-9.0
+10.0
 1
 1
 NIL
@@ -985,6 +985,48 @@ NetLogo 6.2.2
     </enumeratedValueSet>
     <enumeratedValueSet variable="num-turtles">
       <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="search-radius">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="knowledge-gain">
+      <value value="0.1"/>
+      <value value="0.25"/>
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="old-age">
+      <value value="75"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="metabolism">
+      <value value="0.1"/>
+      <value value="0.25"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="shock-prob">
+      <value value="0"/>
+      <value value="0.1"/>
+      <value value="0.2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="reproduction-cost">
+      <value value="0.5"/>
+      <value value="1"/>
+      <value value="2"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="25-starting-turtles" repetitions="1" sequentialRunOrder="false" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="1000"/>
+    <metric>numTurtles</metric>
+    <metric>meanFood</metric>
+    <metric>totKnowledge</metric>
+    <steppedValueSet variable="seed" first="1" step="1" last="10"/>
+    <enumeratedValueSet variable="regeneration-rate">
+      <value value="0.2"/>
+      <value value="0.5"/>
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-turtles">
+      <value value="25"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="search-radius">
       <value value="5"/>
