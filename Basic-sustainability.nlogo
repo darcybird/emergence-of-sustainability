@@ -26,6 +26,7 @@ turtles-own [
 
 to setup
   ca ; clear all
+  reset-ticks
   random-seed seed
   setup-resource
   crt num-turtles [ ; create 10 turtles
@@ -40,7 +41,7 @@ to setup
   set regeneration-rate .1; modifies rate of resource regeneration
   set shock-power-dist (list)
   set nTurtles count turtles
-  reset-ticks
+
   ; random-seed 47822
 end
 
@@ -121,7 +122,7 @@ to move ; need to make more complex if they need resources or knowledge
     [
       ifelse any? other turtles in-radius search-radius
       [      ; if they have food, they head towards another turtle, provided one is nearby
-         face one-of other turtles in-radius search-radius
+         face one-of other turtles in-radius search-radius ; look within search radius and move towards
          fd 1
       ]
       [ ; if they have food, they move randomly
@@ -160,11 +161,11 @@ to cooperate
   [
     if action-this-tick = FALSE  ; turtles can only cooperate once per turn
     [
-      if any? other turtles in-radius search-radius with [ action-this-tick = FALSE ]
+      if any? other turtles in-radius 1 with [ action-this-tick = FALSE ]
       [ ; one turtle looks around
        ; show "I'm beginning this trade"
        ; show knowledge
-        ask one-of other turtles in-radius search-radius with [ action-this-tick = FALSE ]  ; asks a nearby turtle "what's up"
+        ask one-of other turtles in-radius 1 with [ action-this-tick = FALSE ]  ; asks a nearby turtle "what's up"
         [
           set cooperate-count cooperate-count + 1
           set action-this-tick TRUE
@@ -272,6 +273,12 @@ end
 
 to-report numTurtles
   report count turtles
+end
+
+to-report totKnowledge
+  ifelse any? turtles
+  [report sum [knowledge] of turtles]
+  [report 0]
 end
 
 to plot-data
@@ -505,7 +512,7 @@ shock-prob
 shock-prob
 0
 1
-0.2
+0.0
 .1
 1
 NIL
@@ -550,7 +557,7 @@ old-age
 old-age
 0
 100
-100.0
+75.0
 1
 1
 NIL
@@ -565,7 +572,7 @@ knowledge-gain
 knowledge-gain
 0
 1
-0.5
+0.1
 0.1
 1
 NIL
@@ -580,7 +587,7 @@ metabolism
 metabolism
 0
 1
-0.25
+0.1
 0.1
 1
 NIL
@@ -610,7 +617,7 @@ seed
 seed
 0
 100
-1.0
+9.0
 1
 1
 NIL
@@ -963,28 +970,23 @@ NetLogo 6.2.2
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="experiment random numbers" repetitions="1" sequentialRunOrder="false" runMetricsEveryStep="false">
+  <experiment name="100-starting-turtles" repetitions="1" sequentialRunOrder="false" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="1000"/>
     <metric>numTurtles</metric>
     <metric>meanFood</metric>
+    <metric>totKnowledge</metric>
     <steppedValueSet variable="seed" first="1" step="1" last="10"/>
     <enumeratedValueSet variable="regeneration-rate">
-      <value value="0.1"/>
       <value value="0.2"/>
       <value value="0.5"/>
       <value value="1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="num-turtles">
-      <value value="10"/>
-      <value value="25"/>
-      <value value="50"/>
       <value value="100"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="search-radius">
-      <value value="1"/>
-      <value value="2"/>
       <value value="5"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="knowledge-gain">
@@ -994,12 +996,10 @@ NetLogo 6.2.2
     </enumeratedValueSet>
     <enumeratedValueSet variable="old-age">
       <value value="75"/>
-      <value value="100"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="metabolism">
       <value value="0.1"/>
       <value value="0.25"/>
-      <value value="0.5"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="shock-prob">
       <value value="0"/>
