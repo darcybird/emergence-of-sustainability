@@ -18,6 +18,7 @@ turtles-own [
   age ; + 1 per tick
   food ; temporary resources used to survive shocks
   knowledge ; slowly gained based on shocks experienced + via cooperation
+  knowledge-transfer ; knowledge gained via cooperation
   relative-shock-power ; shock-power adjusted by experience
   shocks-survived ; to track each individual's past traumas
   cooperate-count
@@ -35,10 +36,11 @@ to setup
     set knowledge 0 + random 5 ;random pre-acquired knowledge
     setxy random-pxcor random-pycor ;random x and y coordinates
     set food random-poisson 1 ; max ~ 5
+    set knowledge-transfer 0
   ]
-  ; set k-trade 0.1 ; the proportion of knowledge acquired via cooperation
+  set num-shocks 0
   set search-radius 1 ; distance at which cooperation can occur
-  set regeneration-rate .1; modifies rate of resource regeneration
+;  set regeneration-rate .1; modifies rate of resource regeneration
   set shock-power-dist (list)
   set nTurtles count turtles
 
@@ -180,9 +182,8 @@ to cooperate
      ;         show knowledge
               set cooperate-count cooperate-count + 1
               set action-this-tick TRUE
+              set knowledge-transfer knowledge-transfer + knowledge-gain
                ]
-             ;  set knowledge knowledge - ([knowledge] of self * k-trade )     ; that turtle loses knowledge  (save code for resources)
-              ;show knowledge
              set heading 180
             fd 1
           ]
@@ -190,15 +191,14 @@ to cooperate
             if [knowledge] of self >[knowledge] of myself  ; do i know less than you?"
             [
             ask myself
-           [
+              [
               set knowledge knowledge + knowledge-gain
          ;     show "I am the recipient of this trade"
          ;     show knowledge
-             ]
+                set knowledge-transfer knowledge-transfer + knowledge-gain
+              ]
             set heading 180
             fd 1
-            ;set knowledge knowledge + ([knowledge] of self * k-trade )
-           ;     show knowledge
             ]
           ]
         ]
@@ -219,6 +219,7 @@ to reproduce; turtle hatches 1 turtle if is older than 18 and has more than 10 i
         set food random-poisson 1
         set knowledge 0
         set shocks-survived 0
+        set knowledge-transfer 0
       ]
        set food ( food - reproduction-cost )
       ;show "I gave birth"
@@ -278,6 +279,12 @@ end
 to-report totKnowledge
   ifelse any? turtles
   [report sum [knowledge] of turtles]
+  [report 0]
+end
+
+to-report knowledgeTranferred
+  ifelse any? turtles
+  [report sum [knowledge-transfer] of turtles]
   [report 0]
 end
 
@@ -356,7 +363,7 @@ num-turtles
 num-turtles
 0
 50
-25.0
+100.0
 1
 1
 NIL
@@ -512,7 +519,7 @@ shock-prob
 shock-prob
 0
 1
-0.2
+0.5
 .1
 1
 NIL
@@ -542,7 +549,7 @@ regeneration-rate
 regeneration-rate
 0
 1
-0.1
+0.5
 .1
 1
 NIL
@@ -617,7 +624,7 @@ seed
 seed
 0
 100
-10.0
+4.0
 1
 1
 NIL
@@ -970,18 +977,19 @@ NetLogo 6.2.2
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="100-starting-turtles" repetitions="1" sequentialRunOrder="false" runMetricsEveryStep="false">
+  <experiment name="sfi-writeup" repetitions="1" sequentialRunOrder="false" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="1000"/>
     <metric>numTurtles</metric>
     <metric>meanFood</metric>
     <metric>totKnowledge</metric>
+    <metric>knowledgeTranferred</metric>
     <steppedValueSet variable="seed" first="1" step="1" last="10"/>
     <enumeratedValueSet variable="regeneration-rate">
+      <value value="0.1"/>
       <value value="0.2"/>
       <value value="0.5"/>
-      <value value="1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="num-turtles">
       <value value="100"/>
@@ -1005,48 +1013,8 @@ NetLogo 6.2.2
       <value value="0"/>
       <value value="0.1"/>
       <value value="0.2"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="reproduction-cost">
+      <value value="0.3"/>
       <value value="0.5"/>
-      <value value="1"/>
-      <value value="2"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="25-starting-turtles" repetitions="1" sequentialRunOrder="false" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <timeLimit steps="1000"/>
-    <metric>numTurtles</metric>
-    <metric>meanFood</metric>
-    <metric>totKnowledge</metric>
-    <steppedValueSet variable="seed" first="1" step="1" last="10"/>
-    <enumeratedValueSet variable="regeneration-rate">
-      <value value="0.2"/>
-      <value value="0.5"/>
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="num-turtles">
-      <value value="25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="search-radius">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="knowledge-gain">
-      <value value="0.1"/>
-      <value value="0.25"/>
-      <value value="0.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="old-age">
-      <value value="75"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="metabolism">
-      <value value="0.1"/>
-      <value value="0.25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="shock-prob">
-      <value value="0"/>
-      <value value="0.1"/>
-      <value value="0.2"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="reproduction-cost">
       <value value="0.5"/>

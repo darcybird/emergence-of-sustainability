@@ -13,7 +13,7 @@ results <- d %>%
 
 
 
-d_results <- d100 %>% 
+d_results <- d %>% 
   dplyr::select( - variable, - value) %>% 
   dplyr::filter(!is.na(metabolism)) %>% 
   dplyr::left_join(results, by = "run")
@@ -21,4 +21,10 @@ d_results <- d100 %>%
 
 readr::write_csv(d_results, 
                  file = "Sust_model_results_clean.csv")
+
+
+d <- readr::read_csv(
+  here::here("Sust_model_results_clean.csv")
+)
+
 
